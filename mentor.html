@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <title>DIST - მასწავლებლები</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" type="x-icon" href="images/logo.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Tutor Card Styles */
+        .tutor-card {
+            background: rgba(39, 40, 51, 0.8);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .tutor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .tutor-card h3 {
+            color: #e44c65;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .tutor-card .subjects {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tutor-card .subject-tag {
+            background: #5480f1;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+
+        .tutor-card .rating {
+            color: #ffcc00;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .tutor-card .price {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .tutor-card .bio {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tutor-card .tutor-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .tutor-card .tutor-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #e44c65;
+            margin-right: 15px;
+        }
+
+        .tutor-card .tutor-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .tutor-card .tutor-info {
+            flex: 1;
+        }
+
+        .tutor-card .tutor-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Search and Filter Section */
+        .search-section {
+            background-color: #272833;
+            padding: 3em 0;
+            margin-bottom: 3em;
+        }
+
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .search-box {
+            display: flex;
+            margin-bottom: 2em;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 1.1em;
+        }
+
+        .search-box button {
+            background-color: #e44c65;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .filter-section {
+            background: rgba(39, 40, 51, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .filter-group select, 
+        .filter-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: none;
+        }
+
+        .filter-actions {
+            text-align: right;
+        }
+
+        /* Tutors Grid */
+        .tutors-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .tutors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3em;
+        }
+
+        .section-header h2 {
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            color: #e44c65;
+        }
+
+        .section-header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1em;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 3em;
+            gap: 10px;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #272833;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .pagination a.active,
+        .pagination a:hover {
+            background: #e44c65;
+        }
+
+        /* Featured Tutors */
+        .featured-tutors {
+            margin-bottom: 4em;
+        }
+
+        .featured-tutors .tutors-grid {
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ffcc00;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+
+        /* ჩათბოტის სტილები */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #e44c65;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbot-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 998;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-header {
+            background-color: #e44c65;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .bot-message {
+            background-color: #e9e9e9;
+            color: #333;
+            border-top-left-radius: 5px;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background-color: #e44c65;
+            color: white;
+            border-top-right-radius: 5px;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 15px;
+            background-color: #fff;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chatbot-input button {
+            background-color: #e44c65;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chatbot-input button:hover {
+            background-color: #d63b56;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #919191;
+            border-radius: 50%;
+            margin: 0 2px;
+            display: inline-block;
+            animation: typing 1s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .suggestion-chip {
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background-color: #d0d0d0;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .tutors-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-box input {
+                border-radius: 4px;
+                margin-bottom: 10px;
+            }
+            
+            .search-box button {
+                border-radius: 4px;
+                padding: 15px;
+            }
+            
+            .tutor-card .tutor-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .tutor-card .tutor-image {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Chatbot Styles (from student.html) */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #e44c65;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbot-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 998;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* ... (rest of chatbot styles from student.html) ... */
+    </style>
+</head>
+<body class="is-preload">
+    <div id="page-wrapper">
+             <!-- Header -->
+<header id="header">
+    <a href="index.html"><img src="images/logo.png" class="logo" alt="" style="height: 40px; width: auto;"></a>
+    <nav id="nav">
+        <ul>
+            <li><a href="index.html">მთავარი</a></li>
+            <li><a href="mentor.html" class="active">მასწავლებლები</a></li>
+            <li><a href="mycalendar.html">კალენდარი</a></li>
+            <li><a href="register.html" class="button primary">რეგისტრაცია</a></li>
+            <li id="user-profile" style="display:none;">
+                <a href="#"><i class="fas fa-user"></i></a>
+                <ul>
+                    <li><a href="profile.html">პროფილი</a></li>
+                    <li><a href="#" id="logout">გამოსვლა</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <div class="section-header">
+                    <h2>იპოვეთ თქვენი იდეალური მასწავლებელი</h2>
+                    <p>გაეცანით ჩვენს კვალიფიციურ მასწავლებლებს და აირჩიეთ თქვენთვის შესაფერისი</p>
+                </div>
+                
+                <div class="search-box">
+                    <input type="text" id="tutor-search" placeholder="შეიყვანეთ საგანი, მასწავლებლის სახელი ან უნივერსიტეტი...">
+                    <button id="search-button"><i class="fas fa-search"></i> ძებნა</button>
+                </div>
+                
+                <div class="filter-section">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="subject">საგანი</label>
+                            <select id="subject">
+                                <option value="">ყველა საგანი</option>
+                                <option value="მათემატიკა">მათემატიკა</option>
+                                <option value="ფიზიკა">ფიზიკა</option>
+                                <option value="ქიმია">ქიმია</option>
+                                <option value="ბიოლოგია">ბიოლოგია</option>
+                                <option value="ინგლისური">ინგლისური ენა</option>
+                                <option value="ქართული">ქართული ენა და ლიტერატურა</option>
+                                <option value="ისტორია">ისტორია</option>
+                                <option value="გეოგრაფია">გეოგრაფია</option>
+                                <option value="პროგრამირება">პროგრამირება</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="university">უნივერსიტეტი</label>
+                            <select id="university">
+                                <option value="">ყველა უნივერსიტეტი</option>
+                                <option value="თსუ">თბილისის სახელმწიფო უნივერსიტეტი</option>
+                                <option value="ქართული">ქართული ტექნიკური უნივერსიტეტი</option>
+                                <option value="ილია">ილიას სახელმწიფო უნივერსიტეტი</option>
+                                <option value="სამედიცინო">თბილისის სახელმწიფო სამედიცინო უნივერსიტეტი</option>
+                                <option value="სამხატვრო">თბილისის სახელმწიფო სამხატვრო აკადემია</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="price-range">ფასი (საათში)</label>
+                            <select id="price-range">
+                                <option value="">ყველა ფასი</option>
+                                <option value="0-15">15₾-მდე</option>
+                                <option value="15-20">15-20₾</option>
+                                <option value="20-25">20-25₾</option>
+                                <option value="25-30">25-30₾</option>
+                                <option value="30">30₾-ზე მეტი</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="rating">რეიტინგი</label>
+                            <select id="rating">
+                                <option value="">ყველა რეიტინგი</option>
+                                <option value="5">★★★★★ მხოლოდ</option>
+                                <option value="4">★★★★☆ და ზემოთ</option>
+                                <option value="3">★★★☆☆ და ზემოთ</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button id="reset-filters" class="button small">ფილტრების გასუფთავება</button>
+                        <button id="apply-filters" class="button primary small">ფილტრების გამოყენება</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Tutors Section -->
+        <section class="featured-tutors">
+            <div class="tutors-container">
+                <div class="section-header">
+                    <h2>რეკომენდირებული მასწავლებლები</h2>
+                    <p>ჩვენი საუკეთესო მასწავლებლები, რომლებიც მაღალი შეფასებებით და სტუდენტების დადებითი გამოხმაურებით გამოირჩევიან</p>
+                </div>
+                
+                <div class="tutors-grid">
+                    <!-- Featured Tutor 1 -->
+                    <div class="tutor-card">
+                        <span class="featured-badge">რეკომენდირებული</span>
+                        <div class="tutor-header">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="ანა ბერიძე" class="tutor-image">
+                            <div class="tutor-info">
+                                <h3>ანა ბერიძე</h3>
+                                <div class="rating">★★★★★</div>
+                            </div>
+                        </div>
+                        <div class="subjects">
+                            <span class="subject-tag">მათემატიკა</span>
+                            <span class="subject-tag">ფიზიკა</span>
+                        </div>
+                        <div class="price">25₾/საათი</div>
+                        <div class="bio">
+                            სწავლობ თბილისის სახელმწიფო უნივერსიტეტში, მათემატიკის ფაკულტეტზე. მათემატიკისა და ფიზიკის ოლიმპიადების გამარჯვებული. დამეხმარება სასკოლო მათემატიკასა და ფიზიკაში, ასევე ერთიანი ეროვნული გამოცდებისთვის მომზადებაში.
+                        </div>
+                        <div class="tutor-meta">
+                            <span><i class="fas fa-graduation-cap"></i> თსუ, მათემატიკა</span>
+                            <span><i class="fas fa-users"></i> 120+ სტუდენტი</span>
+                        </div>
+                        <div class="tutor-actions">
+                            <a href="profile.html" class="button primary small">პროფილის ნახვა</a>
+                            <a href="mycalendar.html" class="button small">დაჯავშნა</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Featured Tutor 2 -->
+                    <div class="tutor-card">
+                        <span class="featured-badge">რეკომენდირებული</span>
+                        <div class="tutor-header">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="გიორგი კვარაცხელია" class="tutor-image">
+                            <div class="tutor-info">
+                                <h3>გიორგი კვარაცხელია</h3>
+                                <div class="rating">★★★★★</div>
+                            </div>
+                        </div>
+                        <div class="subjects">
+                            <span class="subject-tag">ინგლისური</span>
+                            <span class="subject-tag">გერმანული</span>
+                        </div>
+                        <div class="price">30₾/საათი</div>
+                        <div class="bio">
+                            ფილოლოგიის სტუდენტი, C2 დონის სერტიფიცირებული ინგლისურად (IELTS 8.5) და B2 გერმანულად. 3 წლის გამოცდილება აქვს როგორც ბავშვებთან, ასევე მოზარდებთან და ზრდასრულებთან მუშაობაში. დაგეხმარებათ გრამატიკასა და საუბარში.
+                        </div>
+                        <div class="tutor-meta">
+                            <span><i class="fas fa-graduation-cap"></i> ილიას უნივერსიტეტი, ფილოლოგია</span>
+                            <span><i class="fas fa-users"></i> 90+ სტუდენტი</span>
+                        </div>
+                        <div class="tutor-actions">
+                            <a href="#" class="button primary small">პროფილის ნახვა</a>
+                            <a href="mycalendar.html" class="button small">დაჯავშნა</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- All Tutors Section -->
+        <section>
+            <div class="tutors-container">
+                <div class="section-header">
+                    <h2>ყველა მასწავლებელი</h2>
+                    <p>გაეცანით ჩვენს ყველა კვალიფიციურ მასწავლებელს</p>
+                </div>
+                
+                <div class="tutors-grid">
+                    <!-- Tutor 1 -->
+                    <div class="tutor-card">
+                        <div class="tutor-header">
+                            <img src="https://randomuser.me/api/portraits/women/43.jpg" alt="მარიამ მამულაშვილი" class="tutor-image">
+                            <div class="tutor-info">
+                                <h3>მარიამ მამულაშვილი</h3>
+                                <div class="rating">★★★★☆</div>
+                            </div>
+                        </div>
+                        <div class="subjects">
+                            <span class="subject-tag">ქიმია</span>
+                            <span class="subject-tag">ბიოლოგია</span>
+                        </div>
+                        <div class="price">20₾/საათი</div>
+                        <div class="bio">
+                            მედიცინის სტუდენტი, დაგეხმარებათ სასკოლო ქიმიასა და ბიოლოგიაში, ასევე მომზადებაში ერთიანი ეროვნული გამოცდებისთვის. მაქვს 2 წლის გამოცდილება რეპეტიტორობაში.
+                        </div>
+                        <div class="tutor-meta">
+                            <span><i class="fas fa-graduation-cap"></i> თსსუ, მედიცინა</span>
+                            <span><i class="fas fa-users"></i> 75+ სტუდენტი</span>
+                        </div>
+                        <div class="tutor-actions">
+                            <a href="#" class="button primary small">პროფილის ნახვა</a>
+                            <a href="mycalendar.html" class="button small">დაჯავშნა</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Tutor 2 -->
+                    <div class="tutor-card">
+                        <div class="tutor-header">
+                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="დავით ჯანაშია" class="tutor-image">
+                            <div class="tutor-info">
+                                <h3>დავით ჯანაშია</h3>
+                                <div class="rating">★★★★☆</div>
+                            </div>
+                        </div>
+                        <div class="subjects">
+                            <span class="subject-tag">ფიზიკა</span>
+                            <span class="subject-tag">მათემატიკა</span>
+                        </div>
+                        <div class="price">22₾/საათი</div>
+                        <div class="bio">
+                            ფიზიკის სტუდენტი თბილისის სახელმწიფო უნივერსიტეტში. მაქვს გამოცდილება როგორც სკოლის მოსწავლეებთან, ასევე აბიტურიენტებთან მუშაობაში. დაგეხმარებით ფიზიკისა და მათემატიკის რთული თემების გაგებაში.
+                        </div>
+                        <div class="tutor-meta">
+                            <span><i class="fas fa-graduation-cap"></i> თსუ, ფიზიკა</span>
+                            <span><i class="fas fa-users"></i> 60+ სტუდენტი</span>
+                        </div>
+                        <div class="tutor-actions">
+                            <a href="#" class="button primary small">პროფილის ნახვა</a>
+                            <a href="mycalendar.html" class="button small">დაჯავშნა</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Tutor 3 -->
+                    <div class="tutor-card">
+                        <div class="tutor-header">
+                            <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="ნინო მელიქიძე" class="tutor-image">
+                            <div class="tutor-info">
+                                <h3>ნინო მელიქიძე</h3>
+                                <div class="rating">★★★★★</div>
+                            </div>
+                        </div>
+                        <div class="subjects">
+                            <span class="subject-tag">ქართული</span>
+                            <span class="subject-tag">ლიტერატურა</span>
+                        </div>
+                        <div class="price">18₾/საათი</div>
+                        <div class="bio">
+                            ფილოლოგიის სტუდენტი, სპეციალიზებული ქართული ენისა და ლიტერატურის სფეროში. დაგეხმარებათ ქართული ენის გრამატიკაში, წერით სამუშაოებში, ასევე ლიტერატურული ნაწარმოებების ანალიზში.
+                        </div>
+                        <div class="tutor-meta">
+                            <span><i class="fas fa-graduation-cap"></i> თსუ, ფილოლოგია</span>
+                            <span><i class="fas fa-users"></i> 50+ სტუდენტი</span>
+                        </div>
+                        <div class="tutor-actions">
+                            <a href="#" class="button primary small">პროფილის ნახვა</a>
+                            <a href="mycalendar.html" class="button small">დაჯავშნა</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Tutor 4 -->
+                    <div class="tutor-card">
+                        <div class="tutor-header">
+                            <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="ლევან ხოჯავა" class="tutor-image">
+                            <div class="tutor-info">
+                                <h3>ლევან ხოჯავა</h3>
+                                <div class="rating">★★★★☆</div>
+                            </div>
+                        </div>
+                        <div class="subjects">
+                            <span class="subject-tag">პროგრამირება</span>
+                            <span class="subject-tag">მათემატიკა</span>
+                        </div>
+                        <div class="price">25₾/საათი</div>
+                        <div class="bio">
+                            კომპიუტერული მეცნიერების სტუდენტი, სპეციალიზებული Python და JavaScript პროგრამირებაში. დაგეხმარებათ პროგრამირების საფუძვლების შესწავლაში, ასევე მათემატიკის სასკოლო კურსში.
+                        </div>
+                        <div class="tutor-meta">
+                            <span><i class="fas fa-graduation-cap"></i> ქართული ტექნიკური უნივერსიტეტი</span>
+                            <span><i class="fas fa-users"></i> 40+ სტუდენტი</span>
+                        </div>
+                        <div class="tutor-actions">
+                            <a href="#" class="button primary small">პროფილის ნახვა</a>
+                            <a href="mycalendar.html" class="button small">დაჯავშნა</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Tutor 5 -->
+                    <div class="tutor-card">
+                        <div class="tutor-header">
+                            <img src="https://randomuser.me/api/portraits/women/36.jpg" alt="თამარ ცირეკიძე" class="tutor-image">
+                            <div class="tutor-info">
+                                <h3>თამარ ცირეკიძე</h3>
+                                <div class="rating">★★★★★</div>
+                            </div>
+                        </div>
+                        <div class="subjects">
+                            <span class="subject-tag">ინგლისური</span>
+                            <span class="subject-tag">რუსული</span>
+                        </div>
+                        <div class="price">20₾/საათი</div>
+                        <div class="bio">
+                            უცხოური ენების სტუდენტი, C1 დონის ინგლისურად და B2 დონის რუსულად. დაგეხმარებათ ენის შესწავლაში, გამოცდებისთვის მომზადებაში, ასევე საუბრის პრაქტიკაში.
+                        </div>
+                        <div class="tutor-meta">
+                            <span><i class="fas fa-graduation-cap"></i> ილიას უნივერსიტეტი, უცხოური ენები</span>
+                            <span><i class="fas fa-users"></i> 55+ სტუდენტი</span>
+                        </div>
+                        <div class="tutor-actions">
+                            <a href="#" class="button primary small">პროფილის ნახვა</a>
+                            <a href="mycalendar.html" class="button small">დაჯავშნა</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Tutor 6 -->
+                    <div class="tutor-card">
+                        <div class="tutor-header">
+                            <img src="https://randomuser.me/api/portraits/men/68.jpg" alt="ნიკა ბერაია" class="tutor-image">
+                            <div class="tutor-info">
+                                <h3>ნიკა ბერაია</h3>
+                                <div class="rating">★★★★☆</div>
+                            </div>
+                        </div>
+                        <div class="subjects">
+                            <span class="subject-tag">ქიმია</span>
+                            <span class="subject-tag">ბიოლოგია</span>
+                        </div>
+                        <div class="price">18₾/საათი</div>
+                        <div class="bio">
+                            ბიოქიმიის სტუდენტი, სპეციალიზებული ორგანული ქიმიის სფეროში. დაგეხმარებათ სასკოლო ქიმიისა და ბიოლოგიის კურსის ათვისებაში, ასევე ლაბორატორიული სამუშაოებისთვის მომზადებაში.
+                        </div>
+                        <div class="tutor-meta">
+                            <span><i class="fas fa-graduation-cap"></i> თსუ, ბიოქიმია</span>
+                            <span><i class="fas fa-users"></i> 45+ სტუდენტი</span>
+                        </div>
+                        <div class="tutor-actions">
+                            <a href="#" class="button primary small">პროფილის ნახვა</a>
+                            <a href="mycalendar.html" class="button small">დაჯავშნა</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pagination">
+                    <a href="#" class="active">1</a>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#">4</a>
+                    <a href="#">5</a>
+                    <a href="#">&raquo;</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ჩათბოტის იკონი -->
+        <div class="chatbot-icon" id="chatbot-icon">
+            <i class="fas fa-comment"></i>
+        </div>
+
+        <!-- ჩათბოტის კონტეინერი -->
+        <div class="chatbot-container" id="chatbot-container">
+            <div class="chatbot-header">
+                <h3>DIST ასისტენტი</h3>
+                <button class="close-btn" id="close-chatbot">&times;</button>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="message-container">
+                    <div class="message bot-message">
+                        გამარჯობა! მე ვარ DIST-ის ასისტენტი. რით შემიძლია დაგეხმარო მასწავლებლის პოვნაში?
+                    </div>
+                    <div class="suggestion-chips">
+                        <div class="suggestion-chip">მათემატიკის მასწავლებელი</div>
+                        <div class="suggestion-chip">ინგლისურის მასწავლებელი</div>
+                        <div class="suggestion-chip">ფიზიკის მასწავლებელი</div>
+                        <div class="suggestion-chip">ქიმიის მასწავლებელი</div>
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input-field" placeholder="შეკითხვა დასვით..." style="color: #000;">
+                <button id="send-message-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Footer -->
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="https://www.facebook.com/profile.php?id=61575906249858" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="https://www.instagram.com/distplatform/" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; DIST. All rights reserved.</li>
+                <li>Design: <a href="https://www.linkedin.com/in/%E1%83%A8%E1%83%9D%E1%83%97%E1%83%99%E1%83%98%E1%83%99%E1%83%9D-%E1%83%91%E1%83%94%E1%83%A0%E1%83%9D%E1%83%A8%E1%83%95%E1%83%98%E1%83%9A%E1%83%98-b90a33284/">SHOTIKO</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/jquery.dropotron.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    
+    <script>
+
+            // Tutor Search Functionality
+            const searchButton = document.getElementById('search-button');
+            const tutorSearch = document.getElementById('tutor-search');
+            const subjectFilter = document.getElementById('subject');
+            const universityFilter = document.getElementById('university');
+            const priceFilter = document.getElementById('price-range');
+            const ratingFilter = document.getElementById('rating');
+            const applyFilters = document.getElementById('apply-filters');
+            const resetFilters = document.getElementById('reset-filters');
+            const tutorCards = document.querySelectorAll('.tutor-card');
+
+            function filterTutors() {
+                const searchTerm = tutorSearch.value.toLowerCase();
+                const subjectValue = subjectFilter.value;
+                const universityValue = universityFilter.value;
+                const priceValue = priceFilter.value;
+                const ratingValue = ratingFilter.value;
+
+                tutorCards.forEach(card => {
+                    const tutorName = card.querySelector('h3').textContent.toLowerCase();
+                    const tutorSubjects = Array.from(card.querySelectorAll('.subject-tag')).map(tag => tag.textContent);
+                    const tutorUniversity = card.querySelector('.tutor-meta span:first-child').textContent;
+                    const tutorPrice = parseInt(card.querySelector('.price').textContent);
+                    const tutorRating = card.querySelector('.rating').textContent;
+
+                    // Check search term
+                    const matchesSearch = searchTerm === '' || 
+                        tutorName.includes(searchTerm) || 
+                        tutorSubjects.some(subj => subj.toLowerCase().includes(searchTerm)) ||
+                        tutorUniversity.toLowerCase().includes(searchTerm);
+
+                    // Check subject filter
+                    const matchesSubject = subjectValue === '' || 
+                        tutorSubjects.includes(subjectValue);
+
+                    // Check university filter
+                    const matchesUniversity = universityValue === '' || 
+                        tutorUniversity.includes(universityFilter.options[universityFilter.selectedIndex].text);
+
+                    // Check price filter
+                    let matchesPrice = true;
+                    if (priceValue !== '') {
+                        const [min, max] = priceValue.split('-');
+                        if (max) {
+                            matchesPrice = tutorPrice >= parseInt(min) && tutorPrice <= parseInt(max);
+                        } else if (min === '30') {
+                            matchesPrice = tutorPrice > 30;
+                        } else {
+                            matchesPrice = tutorPrice <= parseInt(min);
+                        }
+                    }
+
+                    // Check rating filter
+                    let matchesRating = true;
+                    if (ratingValue !== '') {
+                        const stars = tutorRating.replace(/[^★]/g, '').length;
+                        matchesRating = stars >= parseInt(ratingValue);
+                    }
+
+                    // Show/hide card based on filters
+                    if (matchesSearch && matchesSubject && matchesUniversity && matchesPrice && matchesRating) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Event listeners
+            searchButton.addEventListener('click', filterTutors);
+            applyFilters.addEventListener('click', filterTutors);
+            
+            resetFilters.addEventListener('click', function() {
+                tutorSearch.value = '';
+                subjectFilter.value = '';
+                universityFilter.value = '';
+                priceFilter.value = '';
+                ratingFilter.value = '';
+                filterTutors();
+            });
+
+            // Initial filter
+            filterTutors();
+        ;
+    </script>
+
+    <!-- Chatbot Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ელემენტების შექმნა
+            const chatbotIcon = document.getElementById('chatbot-icon');
+            const chatbotContainer = document.getElementById('chatbot-container');
+            const closeBtn = document.getElementById('close-chatbot');
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const inputField = document.getElementById('chatbot-input-field');
+            const sendButton = document.getElementById('send-message-btn');
+            const typingIndicator = document.getElementById('typing-indicator');
+
+            // პასუხების ბაზა
+            const responses = {
+                'გამარჯობა': 'გამარჯობა! როგორ შემიძლია დაგეხმაროთ მასწავლებლის პოვნაში?',
+                'gamarjoba': 'გამარჯობა! როგორ შემიძლია დაგეხმაროთ მასწავლებლის პოვნაში?',
+                'hello': 'გამარჯობა! როგორ შემიძლია დაგეხმაროთ მასწავლებლის პოვნაში?',
+                'მათემატიკა': 'მათემატიკის მასწავლებლების სია:\n\n1. ანა ბერიძე - 20₾/საათი ★★★★☆\n2. ლევან ხოჯავა - 22₾/საათი ★★★★☆\n3. ნინო მელიქიძე - 18₾/საათი ★★★★★\n\nრომელი გაინტერესებთ?',
+                'ინგლისური': 'ინგლისური ენის მასწავლებლების სია:\n\n1. გიორგი კვარაცხელია - 25₾/საათი ★★★★★\n2. თამარ ცირეკიძე - 20₾/საათი ★★★★☆\n\nგსურთ უფრო მეტი ინფორმაცია რომელიმე მათ შესახებ?',
+                'ფიზიკა': 'ფიზიკის მასწავლებლების სია:\n\n1. ანა ბერიძე - 20₾/საათი ★★★★☆\n2. დავით ჯანაშია - 23₾/საათი ★★★★☆\n\nრომელი გაინტერესებთ?',
+                'ქიმია': 'ქიმიის მასწავლებლების სია:\n\n1. მარიამ მამულაშვილი - 18₾/საათი ★★★★☆\n2. ნიკა ბერაია - 20₾/საათი ★★★★☆\n\nგსურთ დაჯავშნოთ გაკვეთილი?',
+                'მადლობა': 'არაფრის, სიამოვნებით! კიდევ რამე შემიძლია დაგეხმაროთ?',
+                'არა': 'კარგი, თუ რამე დაგჭირდებათ, მზად ვარ დაგეხმაროთ!',
+                'ნახვამდის': 'ნახვამდის! წარმატებებს გისურვებთ სწავლაში!'
+            };
+
+            // ჩათბოტის გაღება/დახურვა
+            chatbotIcon.addEventListener('click', function() {
+                chatbotContainer.style.display = 'flex';
+                setTimeout(() => {
+                    inputField.focus();
+                }, 300);
+            });
+
+            closeBtn.addEventListener('click', function() {
+                chatbotContainer.style.display = 'none';
+            });
+
+            // შეტყობინების გაგზავნა
+            function sendMessage() {
+                const message = inputField.value.trim();
+                if (message === '') return;
+
+                addMessage(message, 'user');
+                inputField.value = '';
+
+                typingIndicator.style.display = 'flex';
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    const botResponse = getBotResponse(message);
+                    addMessage(botResponse.text, 'bot', botResponse.suggestions);
+                }, 1000 + Math.random() * 1000);
+            }
+
+            // დავამატოთ შეტყობინება ჩატში
+            function addMessage(text, sender, suggestions = []) {
+                const messageContainer = document.createElement('div');
+                messageContainer.className = 'message-container';
+
+                const message = document.createElement('div');
+                message.className = `message ${sender}-message`;
+                message.textContent = text;
+
+                messageContainer.appendChild(message);
+
+                if (suggestions.length > 0) {
+                    const chipsContainer = document.createElement('div');
+                    chipsContainer.className = 'suggestion-chips';
+
+                    suggestions.forEach(suggestion => {
+                        const chip = document.createElement('div');
+                        chip.className = 'suggestion-chip';
+                        chip.textContent = suggestion;
+                        chip.addEventListener('click', () => {
+                            inputField.value = suggestion;
+                            sendMessage();
+                        });
+                        chipsContainer.appendChild(chip);
+                    });
+
+                    messageContainer.appendChild(chipsContainer);
+                }
+
+                messagesContainer.appendChild(messageContainer);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // ბოტის პასუხების ლოგიკა
+            function getBotResponse(message) {
+                message = message.toLowerCase();
+                
+                if (responses[message]) {
+                    return {
+                        text: responses[message],
+                        suggestions: []
+                    };
+                }
+                
+                if (message.includes('გამარჯობა') || message.includes('სალამი')) {
+                    return {
+                        text: 'გამარჯობა! როგორ შემიძლია დაგეხმაროთ მასწავლებლის პოვნაში?',
+                        suggestions: ['მათემატიკა', 'ინგლისური', 'ფიზიკა', 'ქიმია']
+                    };
+                } else if (message.includes('მადლობა') || message.includes('დიდი მადლობა')) {
+                    return {
+                        text: 'არაფრის, სიამოვნებით! კიდევ რამე შემიძლია დაგეხმაროთ?',
+                        suggestions: []
+                    };
+                } else if (message.includes('არა') || message.includes('არა მადლობა')) {
+                    return {
+                        text: 'კარგი, თუ რამე დაგჭირდებათ, მზად ვარ დაგეხმაროთ!',
+                        suggestions: []
+                    };
+                } else if (message.includes('ნახვამდის') || message.includes('bye')) {
+                    return {
+                        text: 'ნახვამდის! წარმატებებს გისურვებთ სწავლაში!',
+                        suggestions: []
+                    };
+                } else if (message.includes('მასწავლებელი') || message.includes('რეპეტიტორი')) {
+                    return {
+                        text: 'რომელ საგანში გჭირდებათ მასწავლებელი?',
+                        suggestions: ['მათემატიკა', 'ინგლისური', 'ფიზიკა', 'ქიმია']
+                    };
+                } else {
+                    return {
+                        text: 'ვერ გავიგე თქვენი შეკითხვა. გთხოვთ მიუთითოთ საგანი, რომელშიც გჭირდებათ მასწავლებელი.',
+                        suggestions: ['მათემატიკა', 'ინგლისური', 'ფიზიკა', 'ქიმია']
+                    };
+                }
+            }
+
+            // მოვუსმინოთ Enter-ის დაჭერას ინფუთში
+            inputField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+                    // მოვუსმინოთ სუგესტიების დაჭერას
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('suggestion-chip')) {
+                inputField.value = e.target.textContent;
+                sendMessage();
+            }
+        });
+
+        // რესპონსიულობა
+        function adjustChatbotForScreenSize() {
+            if (window.innerWidth <= 768) {
+                chatbotContainer.style.width = '90%';
+                chatbotContainer.style.right = '5%';
+                chatbotContainer.style.bottom = '80px';
+                chatbotContainer.style.height = '70vh';
+            } else {
+                chatbotContainer.style.width = '350px';
+                chatbotContainer.style.right = '30px';
+                chatbotContainer.style.bottom = '100px';
+                chatbotContainer.style.height = '500px';
+            }
+        }
+
+        window.addEventListener('resize', adjustChatbotForScreenSize);
+        adjustChatbotForScreenSize();
+    });
+</script>
+</body>
+</html>

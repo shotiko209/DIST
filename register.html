@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <title>რეგისტრაცია - DIST</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" type="x-icon" href="images/logo.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1c1d26;
+            color: #ffffff;
+        }
+        
+        .register-container {
+            max-width: 800px;
+            margin: 4em auto;
+            padding: 3em;
+            background: rgba(39, 40, 51, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .register-header {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+        
+        .register-header h2 {
+            color: #ffffff;
+            font-size: 2.2em;
+            margin-bottom: 0.5em;
+        }
+        
+        .register-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+        }
+        
+        .register-form {
+            margin-top: 2em;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5em;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5em;
+            color: #ffffff;
+            font-weight: 300;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8em;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 1em;
+        }
+        
+        .form-control:focus {
+            border-color: #39c088;
+            outline: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.8em 2em;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: 400;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: #e44c65;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #d63b56;
+        }
+        
+        .btn-success {
+            background-color: #39c088;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #2daa76;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-3 {
+            margin-top: 1.5em;
+        }
+        
+        .survey-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .survey-content {
+            background: #272833;
+            margin: 5% auto;
+            padding: 2em;
+            max-width: 800px;
+            border-radius: 8px;
+            color: #ffffff;
+        }
+        
+        .survey-question {
+            margin-bottom: 1.5em;
+        }
+        
+        .survey-question label {
+            display: block;
+            margin-bottom: 0.5em;
+            color: #ffffff;
+        }
+        
+        .close-survey {
+            float: right;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffffff;
+        }
+        
+        .checkbox-group {
+            margin-top: 0.5em;
+        }
+        
+        .checkbox-group label {
+            display: inline-block;
+            margin-right: 1em;
+            margin-bottom: 0.5em;
+            font-weight: normal;
+        }
+        
+        .alert {
+            padding: 1em;
+            margin-bottom: 1em;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: #2daa76;
+            color: white;
+        }
+        
+        .alert-error {
+            background-color: #d63b56;
+            color: white;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1em;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+    </style>
+</head>
+<body class="is-preload">
+    <div id="page-wrapper">
+                     <!-- Header -->
+                     <header id="header">
+                        <a href="index.html"><img src="images/logo.png" class="logo" alt="" style="height: 40px; width: auto;"></a>
+                        <nav id="nav">
+                            <ul>
+                                <li><a href="index.html">მთავარი</a></li>
+                                <li><a href="mentor.html" class="active">მასწავლებლები</a></li>
+                                <li><a href="mycalendar.html">კალენდარი</a></li>
+                                <li><a href="register.html" class="button primary">რეგისტრაცია</a></li>
+                                <li id="user-profile" style="display:none;">
+                                    <a href="#"><i class="fas fa-user"></i></a>
+                                    <ul>
+                                        <li><a href="profile.html">პროფილი</a></li>
+                                        <li><a href="#" id="logout">გამოსვლა</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </nav>
+                    </header>
+
+
+        <!-- Main Registration Section -->
+        <section class="register-container">
+            <div class="register-header">
+                <h2>შექმენი ანგარიში</h2>
+                <p>დაიწყე სწავლა DIST-თან ერთად</p>
+            </div>
+            
+            <form id="register-form" class="register-form">
+                <div class="form-group">
+                    <label for="email">ელ. ფოსტა</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">პაროლი</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first-name">სახელი</label>
+                        <input type="text" id="first-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">გვარი</label>
+                        <input type="text" id="last-name" class="form-control" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">რეგისტრაცია</button>
+                
+                <div class="text-center mt-3">
+                    <p>გსურთ გახდეთ მენტორი?</p>
+                    <button id="become-mentor-btn" type="button" class="btn btn-success" href="" >გახდი მენტორი</button>
+                </div>
+            </form>
+        </section>
+
+
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="https://www.facebook.com/profile.php?id=61575906249858" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="https://www.instagram.com/distplatform/" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; DIST. All rights reserved.</li>
+                <li>Design: <a href="https://www.linkedin.com/in/%E1%83%A8%E1%83%9D%E1%83%97%E1%83%99%E1%83%98%E1%83%99%E1%83%9D-%E1%83%91%E1%83%94%E1%83%A0%E1%83%9D%E1%83%A8%E1%83%95%E1%83%98%E1%83%9A%E1%83%98-b90a33284/">SHOTIKO</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Register form submission
+            $('#register-form').submit(function(e) {
+                e.preventDefault();
+                
+                const email = $('#email').val();
+                const password = $('#password').val();
+                const firstName = $('#first-name').val();
+                const lastName = $('#last-name').val();
+                
+                $.ajax({
+                    url: '/api/auth/register',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        email,
+                        password,
+                        role: 'student',
+                        firstName,
+                        lastName
+                    }),
+                    success: function(response) {
+                        localStorage.setItem('token', response.token);
+                        window.location.href = 'profile.html';
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON.msg || 'რეგისტრაციისას მოხდა შეცდომა');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

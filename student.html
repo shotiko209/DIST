@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <title>DIST - მოსწავლეებისთვის</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" type="x-icon" href="images/logo.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles from index.html */
+        .tutor-card {
+            background: rgba(39, 40, 51, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .tutor-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tutor-card h3 {
+            color: #e44c65;
+            margin-bottom: 10px;
+        }
+
+        .tutor-card .subjects {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tutor-card .subject-tag {
+            background: #5480f1;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .tutor-card .rating {
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+
+        .tutor-card .price {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* ჩათბოტის სტილები */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #e44c65;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbot-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 998;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-header {
+            background-color: #e44c65;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .bot-message {
+            background-color: #e9e9e9;
+            color: #333;
+            border-top-left-radius: 5px;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background-color: #e44c65;
+            color: white;
+            border-top-right-radius: 5px;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 15px;
+            background-color: #fff;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chatbot-input button {
+            background-color: #e44c65;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chatbot-input button:hover {
+            background-color: #d63b56;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #919191;
+            border-radius: 50%;
+            margin: 0 2px;
+            display: inline-block;
+            animation: typing 1s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .suggestion-chip {
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background-color: #d0d0d0;
+        }
+
+        /* Hero section */
+        .hero-section {
+            background-image: linear-gradient(rgba(23, 24, 32, 0.95), rgba(23, 24, 32, 0.95)), url('https://elearningindustry.com/wp-content/uploads/2024/03/Exploring-The-Benefits-Of-eLearning-For-Children.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 6em 0;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 1em;
+        }
+
+        .hero-section p {
+            max-width: 800px;
+            margin: 0 auto 2em auto;
+            font-size: 1.2em;
+        }
+
+        /* Benefits section */
+        .benefits-section {
+            padding: 4em 0;
+            background-color: #272833;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2em;
+            margin-top: 3em;
+        }
+
+        .benefit-card {
+            background: rgba(39, 40, 51, 0.8);
+            border-radius: 8px;
+            padding: 2em;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .benefit-card i {
+            font-size: 3em;
+            color: #e44c65;
+            margin-bottom: 1em;
+        }
+
+        /* How it works section */
+        .steps-section {
+            padding: 4em 0;
+            background-color: #1c1d26;
+        }
+
+        .steps-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2em;
+            padding: 1.5em;
+            background: rgba(39, 40, 51, 0.8);
+            border-radius: 8px;
+        }
+
+        .step-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #e44c65;
+            margin-right: 1em;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* Tutor search section */
+        .search-section {
+            padding: 4em 0;
+            background-color: #272833;
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 600px;
+            margin: 2em auto;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 1em;
+            border: none;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .search-box button {
+            background-color: #e44c65;
+            color: white;
+            border: none;
+            padding: 0 1.5em;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .tutors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2em;
+            margin-top: 3em;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .chatbot-container {
+                width: 300px;
+                height: 450px;
+                bottom: 80px;
+                right: 10px;
+            }
+            
+            .hero-section h2 {
+                font-size: 2em;
+            }
+            
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 0.5em;
+            }
+        }
+    </style>
+</head>
+<body class="is-preload">
+    <div id="page-wrapper">
+                     <!-- Header -->
+                     <header id="header">
+                        <a href="index.html"><img src="images/logo.png" class="logo" alt="" style="height: 40px; width: auto;"></a>
+                        <nav id="nav">
+                            <ul>
+                                <li><a href="index.html">მთავარი</a></li>
+                                <li><a href="mentor.html" class="active">მასწავლებლები</a></li>
+                                <li><a href="mycalendar.html">კალენდარი</a></li>
+                                <li><a href="register.html" class="button primary">რეგისტრაცია</a></li>
+                                <li id="user-profile" style="display:none;">
+                                    <a href="#"><i class="fas fa-user"></i></a>
+                                    <ul>
+                                        <li><a href="profile.html">პროფილი</a></li>
+                                        <li><a href="#" id="logout">გამოსვლა</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </nav>
+                    </header>
+
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <h2>აღმოაჩინე შენი იდეალური დამხმარე სწავლაში!</h2>
+                <p>გამარჯობა, ძვირფასო მოსწავლეებო! თუ გაგიჭირდათ მასალის გაგება საკლასო ოთახში, ან გსურთ დამატებით დახმარება საგნებში, ჩვენ გთავაზობთ უნიკალურ შესაძლებლობას!</p>
+                <a href="mentor.html" class="button primary large">იპოვე მასწავლებელი</a>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section class="benefits-section">
+            <div class="container">
+                <header class="major">
+                    <h2>რა უპირატესობები აქვს ჩვენს პლატფორმას?</h2>
+                    <p>ჩვენს პლატფორმაზე თქვენ შეძლებთ იპოვოთ გამოცდილი სტუდენტი-რეპეტიტორები, რომლებიც დაგეხმარებიან საგნების უკეთ გაგებაში.</p>
+                </header>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <h3>ხელმისაწვდომობა</h3>
+                        <p>სტუდენტების მიერ შემოთავაზებული ფასები გაცილებით დაბალია, ვიდრე პროფესიონალი რეპეტიტორების.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h3>გაგება</h3>
+                        <p>სტუდენტებს კარგად ესმით თქვენი სირთულეები, რადგან ისინიც ახლო წარსულში იყვნენ თქვენს ადგილას.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-user-friends"></i>
+                        <h3>ინდივიდუალური მიდგომა</h3>
+                        <p>თუ გაკვეთილზე ვერ მოასწარით კითხვის დასმა ან მასწავლებელმა ვერ აგიხსნათ ხელახლა, სტუდენტი-რეპეტიტორი მოგცემთ ამის საშუალებას.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-gamepad"></i>
+                        <h3>ინტერაქტიული სწავლა</h3>
+                        <p>ყოველი გაკვეთილის შემდეგ ქვიზი დაგეხმარებათ ცოდნის გამყარებაში.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-search"></i>
+                        <h3>არჩევანის თავისუფლება</h3>
+                        <p>შეადარეთ სხვადასხვა სტუდენტების რეიტინგები და ფასები.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-robot"></i>
+                        <h3>მარტივი ძებნა</h3>
+                        <p>ჩათ-ბოტი დაგეხმარებათ მარტივად იპოვოთ თქვენთვის სასურველი მასწავლებელი.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="steps-section">
+            <div class="container">
+                <header class="major">
+                    <h2>როგორ ვიპოვოთ თქვენთვის შესაფერისი მასწავლებელი?</h2>
+                </header>
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <h3>გადადით ჩვენს პლატფორმაზე</h3>
+                            <p>დარეგისტრირდით ან შედით თქვენს ანგარიშში</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <h3>გამოიყენეთ ჩათ-ბოტი</h3>
+                            <p>მიუთითეთ ის საგანი, რომელშიც გჭირდებათ დახმარება</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <h3>აირჩიეთ მასწავლებელი</h3>
+                            <p>გაეცანით მათ პროფილებს, რეიტინგებსა და ფასებს</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <h3>დაჯავშნეთ გაკვეთილი</h3>
+                            <p>აირჩიეთ თქვენთვის მოსახერხებელი დრო და დაიწყეთ სწავლა</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       
+
+        <!-- ჩათბოტის იკონი -->
+        <div class="chatbot-icon" id="chatbot-icon">
+            <i class="fas fa-comment"></i>
+        </div>
+
+        <!-- ჩათბოტის კონტეინერი -->
+        <div class="chatbot-container" id="chatbot-container">
+            <div class="chatbot-header">
+                <h3>DIST ასისტენტი</h3>
+                <button class="close-btn" id="close-chatbot">&times;</button>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="message-container">
+                    <div class="message bot-message">
+                        გამარჯობა! მე ვარ DIST-ის ასისტენტი. რით შემიძლია დაგეხმარო მასწავლებლის პოვნაში?
+                    </div>
+                    <div class="suggestion-chips">
+                        <div class="suggestion-chip">მათემატიკის მასწავლებელი</div>
+                        <div class="suggestion-chip">ინგლისურის მასწავლებელი</div>
+                        <div class="suggestion-chip">ფიზიკის მასწავლებელი</div>
+                        <div class="suggestion-chip">ქიმიის მასწავლებელი</div>
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input-field" placeholder="შეკითხვა დასვით..." style="color: #000;">
+                <button id="send-message-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="https://www.facebook.com/profile.php?id=61575906249858" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="https://www.instagram.com/distplatform/" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; DIST. All rights reserved.</li>
+                <li>Design: <a href="https://www.linkedin.com/in/%E1%83%A8%E1%83%9D%E1%83%97%E1%83%99%E1%83%98%E1%83%99%E1%83%9D-%E1%83%91%E1%83%94%E1%83%A0%E1%83%9D%E1%83%A8%E1%83%95%E1%83%98%E1%83%9A%E1%83%98-b90a33284/">SHOTIKO</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/jquery.dropotron.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    
+    <!-- Chatbot Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ელემენტების შექმნა
+            const chatbotIcon = document.getElementById('chatbot-icon');
+            const chatbotContainer = document.getElementById('chatbot-container');
+            const closeBtn = document.getElementById('close-chatbot');
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const inputField = document.getElementById('chatbot-input-field');
+            const sendButton = document.getElementById('send-message-btn');
+            const typingIndicator = document.getElementById('typing-indicator');
+
+            // პასუხების ბაზა
+            const responses = {
+                'გამარჯობა': 'გამარჯობა! როგორ შემიძლია დაგეხმაროთ მასწავლებლის პოვნაში?',
+                'gamarjoba': 'გამარჯობა! როგორ შემიძლია დაგეხმაროთ მასწავლებლის პოვნაში?',
+                'hello': 'გამარჯობა! როგორ შემიძლია დაგეხმაროთ მასწავლებლის პოვნაში?',
+                'მათემატიკა': 'მათემატიკის მასწავლებლების სია:\n\n1. ანა ბერიძე - 20₾/საათი ★★★★☆\n2. ლევან ხოჯავა - 22₾/საათი ★★★★☆\n3. ნინო მელიქიძე - 18₾/საათი ★★★★★\n\nრომელი გაინტერესებთ?',
+                'ინგლისური': 'ინგლისური ენის მასწავლებლების სია:\n\n1. გიორგი კვარაცხელია - 25₾/საათი ★★★★★\n2. თამარ ცირეკიძე - 20₾/საათი ★★★★☆\n\nგსურთ უფრო მეტი ინფორმაცია რომელიმე მათ შესახებ?',
+                'ფიზიკა': 'ფიზიკის მასწავლებლების სია:\n\n1. ანა ბერიძე - 20₾/საათი ★★★★☆\n2. დავით ჯანაშია - 23₾/საათი ★★★★☆\n\nრომელი გაინტერესებთ?',
+                'ქიმია': 'ქიმიის მასწავლებლების სია:\n\n1. მარიამ მამულაშვილი - 18₾/საათი ★★★★☆\n2. ნიკა ბერაია - 20₾/საათი ★★★★☆\n\nგსურთ დაჯავშნოთ გაკვეთილი?',
+                'მადლობა': 'არაფრის, სიამოვნებით! კიდევ რამე შემიძლია დაგეხმაროთ?',
+                'არა': 'კარგი, თუ რამე დაგჭირდებათ, მზად ვარ დაგეხმაროთ!',
+                'ნახვამდის': 'ნახვამდის! წარმატებებს გისურვებთ სწავლაში!'
+            };
+
+            // ჩათბოტის გაღება/დახურვა
+            chatbotIcon.addEventListener('click', function() {
+                chatbotContainer.style.display = 'flex';
+                setTimeout(() => {
+                    inputField.focus();
+                }, 300);
+            });
+
+            closeBtn.addEventListener('click', function() {
+                chatbotContainer.style.display = 'none';
+            });
+
+            // შეტყობინების გაგზავნა
+            function sendMessage() {
+                const message = inputField.value.trim();
+                if (message === '') return;
+
+                addMessage(message, 'user');
+                inputField.value = '';
+
+                typingIndicator.style.display = 'flex';
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    const botResponse = getBotResponse(message);
+                    addMessage(botResponse.text, 'bot', botResponse.suggestions);
+                }, 1000 + Math.random() * 1000);
+            }
+
+            // დავამატოთ შეტყობინება ჩატში
+            function addMessage(text, sender, suggestions = []) {
+                const messageContainer = document.createElement('div');
+                messageContainer.className = 'message-container';
+
+                const message = document.createElement('div');
+                message.className = `message ${sender}-message`;
+                message.textContent = text;
+
+                messageContainer.appendChild(message);
+
+                if (suggestions.length > 0) {
+                    const chipsContainer = document.createElement('div');
+                    chipsContainer.className = 'suggestion-chips';
+
+                    suggestions.forEach(suggestion => {
+                        const chip = document.createElement('div');
+                        chip.className = 'suggestion-chip';
+                        chip.textContent = suggestion;
+                        chip.addEventListener('click', () => {
+                            inputField.value = suggestion;
+                            sendMessage();
+                        });
+                        chipsContainer.appendChild(chip);
+                    });
+
+                    messageContainer.appendChild(chipsContainer);
+                }
+
+                messagesContainer.appendChild(messageContainer);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // ბოტის პასუხების ლოგიკა
+            function getBotResponse(message) {
+                message = message.toLowerCase();
+                
+                if (responses[message]) {
+                    return {
+                        text: responses[message],
+                        suggestions: []
+                    };
+                }
+                
+                if (message.includes('გამარჯობა') || message.includes('სალამი')) {
+                    return {
+                        text: 'გამარჯობა! როგორ შემიძლია დაგეხმაროთ მასწავლებლის პოვნაში?',
+                        suggestions: ['მათემატიკა', 'ინგლისური', 'ფიზიკა', 'ქიმია']
+                    };
+                } else if (message.includes('მადლობა') || message.includes('დიდი მადლობა')) {
+                    return {
+                        text: 'არაფრის, სიამოვნებით! კიდევ რამე შემიძლია დაგეხმაროთ?',
+                        suggestions: []
+                    };
+                } else if (message.includes('არა') || message.includes('არა მადლობა')) {
+                    return {
+                        text: 'კარგი, თუ რამე დაგჭირდებათ, მზად ვარ დაგეხმაროთ!',
+                        suggestions: []
+                    };
+                } else if (message.includes('ნახვამდის') || message.includes('bye')) {
+                    return {
+                        text: 'ნახვამდის! წარმატებებს გისურვებთ სწავლაში!',
+                        suggestions: []
+                    };
+                } else if (message.includes('მასწავლებელი') || message.includes('რეპეტიტორი')) {
+                    return {
+                        text: 'რომელ საგანში გჭირდებათ მასწავლებელი?',
+                        suggestions: ['მათემატიკა', 'ინგლისური', 'ფიზიკა', 'ქიმია']
+                    };
+                } else {
+                    return {
+                        text: 'ვერ გავიგე თქვენი შეკითხვა. გთხოვთ მიუთითოთ საგანი, რომელშიც გჭირდებათ მასწავლებელი.',
+                        suggestions: ['მათემატიკა', 'ინგლისური', 'ფიზიკა', 'ქიმია']
+                    };
+                }
+            }
+
+            // მოვუსმინოთ Enter-ის დაჭერას ინფუთში
+            inputField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+                    // მოვუსმინოთ სუგესტიების დაჭერას
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('suggestion-chip')) {
+                inputField.value = e.target.textContent;
+                sendMessage();
+            }
+        });
+
+        // რესპონსიულობა
+        function adjustChatbotForScreenSize() {
+            if (window.innerWidth <= 768) {
+                chatbotContainer.style.width = '90%';
+                chatbotContainer.style.right = '5%';
+                chatbotContainer.style.bottom = '80px';
+                chatbotContainer.style.height = '70vh';
+            } else {
+                chatbotContainer.style.width = '350px';
+                chatbotContainer.style.right = '30px';
+                chatbotContainer.style.bottom = '100px';
+                chatbotContainer.style.height = '500px';
+            }
+        }
+
+        window.addEventListener('resize', adjustChatbotForScreenSize);
+        adjustChatbotForScreenSize();
+    });
+</script>
+</body>
+</html>

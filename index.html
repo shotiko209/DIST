@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <title>DIST - Connecting Students and Tutors</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" type="x-icon" href="images/logo.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+    <style>
+        /* Custom Calendar Styles */
+        .calendar-container {
+            background: rgba(39, 40, 51, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 900px;
+        }
+        
+        .fc-header-toolbar {
+            margin-bottom: 1em;
+        }
+        
+        .fc-event {
+            cursor: pointer;
+            padding: 2px 4px;
+        }
+        
+        /* Chat Interface */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            background: #272833;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .chat-header {
+            background: #e44c65;
+            color: white;
+            padding: 10px 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #444;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        
+        .chat-input button {
+            background: #e44c65;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0 15px;
+            cursor: pointer;
+        }
+        
+        /* Video Call Container */
+        .video-container {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 300px;
+            background: #272833;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .video-header {
+            background: #5480f1;
+            color: white;
+            padding: 10px 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .video-content {
+            padding: 10px;
+            text-align: center;
+        }
+        
+        #localVideo, #remoteVideo {
+            width: 100%;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .call-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .call-controls button {
+            background: #e44c65;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .header#header .logo {
+        height: 40px;
+        width: auto;
+        max-height: 100%;
+        }
+
+        /* Tutor card styles */
+        .tutor-card {
+            background: rgba(39, 40, 51, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .tutor-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tutor-card h3 {
+            color: #e44c65;
+            margin-bottom: 10px;
+        }
+
+        .tutor-card .subjects {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tutor-card .subject-tag {
+            background: #5480f1;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .tutor-card .rating {
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+
+        .tutor-card .price {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Quiz styles */
+        .quiz-container {
+            background: rgba(39, 40, 51, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .quiz-question {
+            margin-bottom: 15px;
+        }
+
+        .quiz-options {
+            margin-left: 20px;
+        }
+
+        .quiz-option {
+            margin-bottom: 5px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 280px;
+            }
+            
+            .video-container {
+                width: 250px;
+            }
+        }
+
+        /* ჩათბოტის იკონი */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #e44c65;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbot-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        /* ჩათბოტის კონტეინერი */
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 998;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* ჩათბოტის სათაური */
+        .chatbot-header {
+            background-color: #e44c65;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* ჩათის შეტყობინებების კონტეინერი */
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+        }
+
+        /* შეტყობინების სტილი */
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .bot-message {
+            background-color: #e9e9e9;
+            color: #333;
+            border-top-left-radius: 5px;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background-color: #e44c65;
+            color: white;
+            border-top-right-radius: 5px;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        /* ჩათის შეტყობინების ტიპი */
+        .message-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ჩათის შესაყვანი ველი */
+        .chatbot-input {
+            display: flex;
+            padding: 15px;
+            background-color: #fff;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chatbot-input button {
+            background-color: #e44c65;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chatbot-input button:hover {
+            background-color: #d63b56;
+        }
+
+        /* ბოტის ტიპინგ ინდიკატორი */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #919191;
+            border-radius: 50%;
+            margin: 0 2px;
+            display: inline-block;
+            animation: typing 1s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* სუგესტიები */
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .suggestion-chip {
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background-color: #d0d0d0;
+        }
+
+        /* მობილური ადაპტაცია */
+        @media (max-width: 768px) {
+            .chatbot-container {
+                width: 300px;
+                height: 450px;
+                bottom: 80px;
+                right: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body class="is-preload landing">
+    <div id="page-wrapper">
+        <!-- Header -->
+<header id="header">
+    <a href="index.html"><img src="images/logo.png" class="logo" alt="" style="height: 40px; width: auto;"></a>
+    <nav id="nav">
+        <ul>
+            <li><a href="index.html">მთავარი</a></li>
+            <li><a href="mentor.html" class="active">მასწავლებლები</a></li>
+            <li><a href="mycalendar.html">კალენდარი</a></li>
+            <li><a href="register.html" class="button primary">რეგისტრაცია</a></li>
+            <li id="user-profile" style="display:none;">
+                <a href="#"><i class="fas fa-user"></i></a>
+                <ul>
+                    <li><a href="profile.html">პროფილი</a></li>
+                    <li><a href="#" id="logout">გამოსვლა</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+
+        <!-- Banner Section -->
+        <section id="banner">
+            <div class="content">
+                <header>
+                    <h2>DIST</h2>
+                    <p>დაუკავშირდი სტუდენტ მასწავლებლებს და გაუმარტივე სწავლა</p>
+                </header>
+                <span class="image"><img src="images/pic01.jpg" alt=""></span>
+            </div>
+            <a href="#one" class="goto-next scrolly">Next</a>
+        </section>
+
+        <!-- Features Section -->
+        <section id="one" class="spotlight style1 bottom">
+            <span class="image fit main"><img src="images/pic02.jpg" alt=""></span>
+            <div class="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 col-12-medium">
+                            <header>
+                                <h2>ცოდნის გაზიარების პლატფორმა</h2>
+                                <p>ისწავლე და ასწავლე მარტივად</p>
+                            </header>
+                        </div>
+                        <div class="col-4 col-12-medium">
+                            <p>ჩვენი პლატფორმა აკავშირებს მოსწავლეებს, ვისაც დახმარება სჭირდება, და სტუდენტებს, ვისაც ცოდნის გაზიარებით შემოსავლის მიღება სურს.</p>
+                        </div>
+                        <div class="col-4 col-12-medium">
+                            <p>გახდი ჩვენი პლატფორმის ნაწილი და ისარგებლე ხარისხიანი სწავლებით ან გაუზიარე შენი ცოდნა სხვებს!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#two" class="goto-next scrolly">Next</a>
+        </section>
+
+        <!-- For Students Section -->
+        <section id="two" class="spotlight style2 right">
+            <span class="image fit main"><img src="images/pic03.jpg" alt=""></span>
+            <div class="content">
+                <header>
+                    <h2>მოსწავლეებისთვის</h2>
+                    <p>იპოვე შენთვის სასურველი მასწავლებელი</p>
+                </header>
+                <p>ჩვენი ჩათ-ბოტის დახმარებით შეგიძლია მარტივად იპოვო სასურველი საგნის მასწავლებელი, შეადარო მათი რეიტინგები და ფასები, და აირჩიო შენთვის ყველაზე შესაფერისი ვარიანტი.</p>
+                <ul class="actions">
+                    <li><a href="student.html" class="button">გაიგე მეტი</a></li>
+                </ul>
+            </div>
+            <a href="#three" class="goto-next scrolly">Next</a>
+        </section>
+
+        <!-- For Tutors Section -->
+        <section id="three" class="spotlight style3 left">
+            <span class="image fit main bottom"><img src="images/pic04.jpg" alt=""></span>
+            <div class="content">
+                <header>
+                    <h2>სტუდენტ მასწავლებლებისთვის</h2>
+                    <p>გაზიარე ცოდნა და მიიღე შემოსავალი</p>
+                </header>
+                <p>თუ კარგად იცნობ რომელიმე საგანს, შეგიძლია გახდე მასწავლებელი ჩვენ პლატფორმაზე. მიიღე გამოცდილება და შემოსავალი სწავლის პარალელურად.</p>
+                <ul class="actions">
+                    <li><a href="student2.html" class="button">გაიგე მეტი</a></li>
+                </ul>
+            </div>
+            <a href="#four" class="goto-next scrolly">Next</a>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="four" class="wrapper style1 special fade-up">
+            <div class="container">
+                <header class="major">
+                    <h2>როგორ მუშაობს პლატფორმა</h2>
+                    <p>მარტივი და ეფექტური პროცესი</p>
+                </header>
+                <div class="box alt">
+                    <div class="row gtr-uniform">
+                        <section class="col-4 col-6-medium col-12-xsmall">
+                            <span class="icon solid alt major fa-search"></span>
+                            <h3>იპოვე მასწავლებელი</h3>
+                            <p>გამოიყენე ჩვენი ჩათ-ბოტი ან ძებნის სისტემა რომ იპოვო შენთვის სასურველი მასწავლებელი.</p>
+                        </section>
+                        <section class="col-4 col-6-medium col-12-xsmall">
+                            <span class="icon solid alt major fa-calendar"></span>
+                            <h3>დაჯავშნე გაკვეთილი</h3>
+                            <p>აირჩიე შენთვის მოსახერხებელი დრო და დაჯავშნე გაკვეთილი ჩვენი კალენდარის სისტემით.</p>
+                        </section>
+                        <section class="col-4 col-6-medium col-12-xsmall">
+                            <span class="icon solid alt major fa-video"></span>
+                            <h3>დაუკავშირდი</h3>
+                            <p>გამოიყენე ჩვენი ვიდეო/აუდიო სისტემა რომ დაუკავშირდე მასწავლებელს და დაიწყო სწავლა.</p>
+                        </section>
+                        <section class="col-4 col-6-medium col-12-xsmall">
+                            <span class="icon solid alt major fa-chalkboard-teacher"></span>
+                            <h3>ისწავლე</h3>
+                            <p>მიიღე ხარისხიანი გაკვეთილები და გაიღრმავე ცოდნა შენს სუსტ საგნებში.</p>
+                        </section>
+                        <section class="col-4 col-6-medium col-12-xsmall">
+                            <span class="icon solid alt major fa-star"></span>
+                            <h3>შეაფასე</h3>
+                            <p>გაკვეთილის დასრულების შემდეგ შეაფასე მასწავლებელი და დაწერე შენი შთაბეჭდილება.</p>
+                        </section>
+                        <section class="col-4 col-6-medium col-12-xsmall">
+                            <span class="icon solid alt major fa-graduation-cap"></span>
+                            <h3>გაიუმჯობესე</h3>
+                            <p>გაიარე ქვიზი გაკვეთილის შემდეგ რომ დარწმუნდე რომ კარგად გაიგე მასალა.</p>
+                        </section>
+                    </div>
+                </div>
+                <footer class="major">
+                    <ul class="actions special">
+                        <li><a href="register.html" class="button">დარეგისტრირდი ახლავე</a></li>
+                    </ul>
+                </footer>
+            </div>
+        </section>
+
+        <!-- Calendar Modal -->
+        <div id="calendar-modal" class="modal" style="display:none;">
+            <div class="modal-content" style="background:#272833;padding:20px;border-radius:8px;max-width:900px;margin:50px auto;">
+                <span class="close">&times;</span>
+                <div id="calendar" class="calendar-container"></div>
+            </div>
+        </div>
+        
+        <!-- Chat Interface -->
+        <div class="chat-container" id="chat-window">
+            <div class="chat-header" id="chat-header">
+                <span>ჩათი</span>
+                <span style="float:right;"><i class="fas fa-times" id="close-chat"></i></span>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will appear here -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="დაწერეთ შეტყობინება...">
+                <button id="send-message"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+       <!-- ჩათბოტის იკონი -->
+<div class="chatbot-icon" id="chatbot-icon">
+    <i class="fas fa-comment"></i>
+</div>
+
+<!-- ჩათბოტის კონტეინერი -->
+<div class="chatbot-container" id="chatbot-container">
+    <div class="chatbot-header">
+        <h3>DIST ასისტენტი</h3>
+        <button class="close-btn" id="close-chatbot">&times;</button>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages">
+        <div class="message-container">
+            <div class="message bot-message">
+                გამარჯობა! მე ვარ DIST-ის ასისტენტი. რით შემიძლია დაგეხმარო?
+            </div>
+            <div class="suggestion-chips">
+                <div class="suggestion-chip">როგორ დავიწყო სწავლა?</div>
+                <div class="suggestion-chip">როგორ გავხდე მასწავლებელი?</div>
+                <div class="suggestion-chip">ჩემი გაკვეთილები</div>
+                <div class="suggestion-chip">საგნების ჩამონათვალი</div>
+            </div>
+        </div>
+        <div class="typing-indicator" id="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div class="chatbot-input">
+        <input type="text" id="chatbot-input-field" placeholder="შეკითხვა დასვით..." style="color: #000;">
+        <button id="send-message-btn">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ელემენტების შექმნა
+        const chatbotIcon = document.getElementById('chatbot-icon');
+        const chatbotContainer = document.getElementById('chatbot-container');
+        const closeBtn = document.getElementById('close-chatbot');
+        const messagesContainer = document.getElementById('chatbot-messages');
+        const inputField = document.getElementById('chatbot-input-field');
+        const sendButton = document.getElementById('send-message-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // პასუხების ბაზა
+        const responses = {
+            'გამარჯობა': 'გამარჯობა! რით შემიძლია დაგეხმარო?',
+            'gamarjoba': 'გამარჯობა! რით შემიძლია დაგეხმარო?',
+            'hello': 'გამარჯობა! რით შემიძლია დაგეხმარო?',
+            'Hello': 'გამარჯობა! რით შემიძლია დაგეხმარო?',
+            'Hi': 'გამარჯობა! რით შემიძლია დაგეხმარო?',
+            'hi': 'გამარჯობა! რით შემიძლია დაგეხმარო?',
+            'როგორ ხარ': 'მე ვარ ციფრული ასისტენტი, მზად ვარ დაგეხმარო! შენ როგორ ხარ?',
+            'როგორ ხარ?': 'მე ვარ ციფრული ასისტენტი, მზად ვარ დაგეხმარო! შენ როგორ ხარ?',
+            'კარგად': 'მშვენიერია! რით შემიძლია დაგეხმარო?',
+            'კარგად ვარ': 'მშვენიერია! რით შემიძლია დაგეხმარო?',
+            'მადლობა': 'არაფრის, სიამოვნებით! კიდევ რამე დაგვჭირდება?',
+            'მადლობა!': 'არაფრის, სიამოვნებით! კიდევ რამე დაგვჭირდება?',
+            'არა': 'კარგი, თუ რამე დაგჭირდება, მზად ვარ დაგეხმარო!',
+            'არა, მადლობა': 'კარგი, თუ რამე დაგჭირდება, მზად ვარ დაგეხმარო!',
+            'bye': 'ნახვამდის! კარგი დღე გისურვებ!',
+            'ნახვამდის': 'ნახვამდის! კარგი დღე გისურვებ!'
+        };
+
+        // ჩათბოტის გაღება/დახურვა
+        chatbotIcon.addEventListener('click', function() {
+            chatbotContainer.style.display = 'flex';
+            // საუკეთესო გამოცდილებისთვის, ფოკუსი გადავიტანოთ ინფუთზე
+            setTimeout(() => {
+                inputField.focus();
+            }, 300);
+        });
+
+        closeBtn.addEventListener('click', function() {
+            chatbotContainer.style.display = 'none';
+        });
+
+        // შეტყობინების გაგზავნა
+        function sendMessage() {
+            const message = inputField.value.trim();
+            if (message === '') return;
+
+            // დავამატოთ მომხმარებლის შეტყობინება
+            addMessage(message, 'user');
+            inputField.value = '';
+
+            // ვაჩვენოთ ტიპინგის ინდიკატორი
+            typingIndicator.style.display = 'flex';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // დავიმიტაციოთ ბოტის პასუხი მცირე დაყოვნებით
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                const botResponse = getBotResponse(message);
+                addMessage(botResponse.text, 'bot', botResponse.suggestions);
+            }, 1000 + Math.random() * 1000); // რეალისტური დაყოვნება
+        }
+
+        // დავამატოთ შეტყობინება ჩატში
+        function addMessage(text, sender, suggestions = []) {
+            const messageContainer = document.createElement('div');
+            messageContainer.className = 'message-container';
+
+            const message = document.createElement('div');
+            message.className = `message ${sender}-message`;
+            message.textContent = text;
+
+            messageContainer.appendChild(message);
+
+            // თუ არსებობს სუგესტიები, დავამატოთ ისინი
+            if (suggestions.length > 0) {
+                const chipsContainer = document.createElement('div');
+                chipsContainer.className = 'suggestion-chips';
+
+                suggestions.forEach(suggestion => {
+                    const chip = document.createElement('div');
+                    chip.className = 'suggestion-chip';
+                    chip.textContent = suggestion;
+                    chip.addEventListener('click', () => {
+                        inputField.value = suggestion;
+                        sendMessage();
+                    });
+                    chipsContainer.appendChild(chip);
+                });
+
+                messageContainer.appendChild(chipsContainer);
+            }
+
+            messagesContainer.appendChild(messageContainer);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // ბოტის პასუხების ლოგიკა
+        function getBotResponse(message) {
+            message = message.toLowerCase();
+            
+            // პირველად შევამოწმოთ მარტივი პასუხები
+            if (responses[message]) {
+                return {
+                    text: responses[message],
+                    suggestions: []
+                };
+            }
+            
+            // მარტივი პასუხების ხე
+            if (message.includes('გამარჯობა') || message.includes('სალამი')) {
+                return {
+                    text: 'გამარჯობა! რით შემიძლია დაგეხმარო?',
+                    suggestions: ['კურსები', 'რეგისტრაცია', 'მასწავლებლები']
+                };
+            } else if (message.includes('რეგისტრაცია') || message.includes('სარეგისტრაციო')) {
+                return {
+                    text: 'რეგისტრაციისთვის დააჭირეთ ზედა მარჯვენა კუთხეში მოცემულ "რეგისტრაცია" ღილაკს ან გამოიყენეთ ეს ბმული: register.html',
+                    suggestions: ['მასწავლებლის რეგისტრაცია', 'სტუდენტის რეგისტრაცია']
+                };
+            } else if (message.includes('მასწავლებელი') || message.includes('ტუტორი') || message.includes('გავხდე მასწავლებელი')) {
+                return {
+                    text: 'მასწავლებლად რეგისტრაციისთვის, ჯერ შექმენით ანგარიში და შემდეგ პროფილის გვერდზე აირჩიეთ "გახდი მასწავლებელი".',
+                    suggestions: ['რა საგნები არის?', 'რა ანაზღაურებაა?', 'როგორ დავიწყო?']
+                };
+            } else if (message.includes('საგან') || message.includes('საგნები') || message.includes('კურს')) {
+                return {
+                    text: 'ჩვენს პლატფორმაზე შეგიძლიათ ისწავლოთ შემდეგი საგნები: მათემატიკა, ფიზიკა, ქიმია, ბიოლოგია, ისტორია, გეოგრაფია, ქართული ენა და ლიტერატურა, ინგლისური ენა, პროგრამირება და სხვა.',
+                    suggestions: ['რომელი საგანია პოპულარული?', 'ვინ ასწავლის მათემატიკას?', 'ფასები']
+                };
+            } else if (message.includes('ფას') || message.includes('ღირს') || message.includes('თანხა')) {
+                return {
+                    text: 'გაკვეთილების ფასი დამოკიდებულია მასწავლებელზე და საგანზე. საშუალოდ, ფასები იწყება 15₾-დან საათში.',
+                    suggestions: ['მასწავლებლები', 'გაკვეთილის ჯავშანი', 'გადახდის მეთოდები']
+                };
+            } else if (message.includes('ჯავშან') || message.includes('დაჯავშნა') || message.includes('გაკვეთილი')) {
+                return {
+                    text: 'გაკვეთილის დასაჯავშნად, აირჩიეთ სასურველი მასწავლებელი, შემდეგ კი კალენდარიდან აირჩიეთ თქვენთვის მოსახერხებელი დრო.',
+                    suggestions: ['მასწავლებლის არჩევა', 'კალენდრის ნახვა', 'ჩემი ჯავშნები']
+                };
+            } else if (message.includes('გადახდა') || message.includes('გადახდის')) {
+                return {
+                    text: 'გადახდა შესაძლებელია ონლაინ, საბანკო ბარათით ან საბანკო გადარიცხვით.',
+                    suggestions: ['უსაფრთხოა?', 'რა არის ფასი?', 'დაბრუნების პოლიტიკა']
+                };
+            } else if (message.includes('კონტაქტ') || message.includes('დაკავშირება') || message.includes('დამხმარება')) {
+                return {
+                    text: 'დახმარებისთვის შეგიძლიათ დაგვიკავშირდეთ ელ-ფოსტაზე: support@DIST.ge ან დარეკოთ: +995 32 2 123 456.',
+                    suggestions: ['ხშირად დასმული კითხვები', 'მხარდაჭერა', 'მდებარეობა']
+                };
+            } else if (message.includes('ავტორიზაცია') || message.includes('შესვლა') || message.includes('ლოგინ')) {
+                return {
+                    text: 'ავტორიზაციისთვის გადადით ბმულზე: login.html ან დააჭირეთ "რეგისტრაცია" ღილაკს და აირჩიეთ "შესვლა".',
+                    suggestions: ['პაროლის აღდგენა', 'რეგისტრაცია', 'პრობლემა შესვლისას']
+                };
+            } else if (message.includes('მოწმობა') || message.includes('სერტიფიკატ')) {
+                return {
+                    text: 'ჩვენთან სწავლის დასრულების შემდეგ, შეგიძლიათ მიიღოთ კურსის დასრულების სერტიფიკატი.',
+                    suggestions: ['როგორ მივიღო სერტიფიკატი?', 'რა ღირს სერტიფიკატი?', 'აღიარებულია?']
+                };
+            } else if (message.includes('როგორ მუშაობს') || message.includes('პლატფორმა')) {
+                return {
+                    text: 'ჩვენი პლატფორმა აკავშირებს სტუდენტებს და მასწავლებლებს. აირჩიეთ საგანი, მოძებნეთ მასწავლებელი, დაჯავშნეთ გაკვეთილი და დაიწყეთ სწავლა ონლაინ.',
+                    suggestions: ['გაკვეთილის ფორმატი', 'ტექნიკური მოთხოვნები', 'მეტი ინფორმაცია']
+                };
+            } else {
+                return {
+                    text: 'მაპატიეთ, ვერ დავამუშავე თქვენი შეკითხვა. შეგიძლიათ სხვაგვარად ჩამოაყალიბოთ ან აირჩიოთ ერთ-ერთი ჩვენი სუგესტია.',
+                    suggestions: ['საგნები', 'მასწავლებლები', 'რეგისტრაცია', 'ფასები', 'დახმარება']
+                };
+            }
+        }
+
+        // მოვუსმინოთ Enter-ის დაჭერას ინფუთში
+        inputField.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // მოვუსმინოთ ღილაკის დაჭერას
+        sendButton.addEventListener('click', sendMessage);
+
+        // მოვუსმინოთ სუგესტიების დაჭერას
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('suggestion-chip')) {
+                inputField.value = e.target.textContent;
+                sendMessage();
+            }
+        });
+
+        // დავამატოთ რესპონსიული სტილები
+        function adjustChatbotForScreenSize() {
+            if (window.innerWidth <= 768) {
+                chatbotContainer.style.width = '90%';
+                chatbotContainer.style.right = '5%';
+                chatbotContainer.style.bottom = '80px';
+                chatbotContainer.style.height = '70vh';
+            } else {
+                chatbotContainer.style.width = '350px';
+                chatbotContainer.style.right = '30px';
+                chatbotContainer.style.bottom = '100px';
+                chatbotContainer.style.height = '500px';
+            }
+        }
+
+        // დავამატოთ რესპონსიულობის მოსმენა
+        window.addEventListener('resize', adjustChatbotForScreenSize);
+        adjustChatbotForScreenSize();
+    });
+</script>
+        
+        <!-- Video Call Interface -->
+        <div class="video-container" id="video-window">
+            <div class="video-header">
+                <span>ვიდეო ზარი</span>
+                <span style="float:right;"><i class="fas fa-times" id="close-video"></i></span>
+            </div>
+            <div class="video-content">
+                <video id="remoteVideo" autoplay></video>
+                <video id="localVideo" autoplay muted></video>
+                <div class="call-controls">
+                    <button id="mute-audio"><i class="fas fa-microphone"></i></button>
+                    <button id="mute-video"><i class="fas fa-video"></i></button>
+                    <button id="end-call"><i class="fas fa-phone-slash"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Modal -->
+        <div id="quiz-modal" class="modal" style="display:none;">
+            <div class="modal-content quiz-container" style="max-width:600px;">
+                <span class="close">&times;</span>
+                <h2>გაკვეთილის ქვიზი</h2>
+                <div id="quiz-questions">
+                    <!-- Quiz questions will be loaded here -->
+                </div>
+                <button id="submit-quiz" class="button primary">შეფასება</button>
+            </div>
+        </div>
+
+        <!-- Tutor Search Modal -->
+        <div id="tutor-search-modal" class="modal" style="display:none;">
+            <div class="modal-content" style="max-width:800px;">
+                <span class="close">&times;</span>
+                <h2>მასწავლებლის ძებნა</h2>
+                <div class="search-box">
+                    <input type="text" id="tutor-search-input" placeholder="შეიყვანეთ საგანი ან მასწავლებლის სახელი...">
+                    <button id="tutor-search-button"><i class="fas fa-search"></i></button>
+                </div>
+                <div id="tutor-results">
+                    <!-- Tutor results will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <ul class="icons">
+            <li><a href="https://www.facebook.com/profile.php?id=61575906249858" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+            <li><a href="https://www.instagram.com/distplatform/" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+        </ul>
+        <ul class="copyright">
+            <li>&copy; DIST. All rights reserved.</li>
+            <li>Design: <a href="https://www.linkedin.com/in/%E1%83%A8%E1%83%9D%E1%83%97%E1%83%99%E1%83%98%E1%83%99%E1%83%9D-%E1%83%91%E1%83%94%E1%83%A0%E1%83%9D%E1%83%A8%E1%83%95%E1%83%98%E1%83%9A%E1%83%98-b90a33284/">SHOTIKO</a></li>
+        </ul>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/jquery.dropotron.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    
+    <!-- FullCalendar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    
+    <!-- Socket.io for real-time chat -->
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    
+    <script>
+        // Check if user is logged in
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                $('#user-profile').show();
+                $('.button.primary').text('პროფილი').attr('href', 'profile.html');
+            }
+        }
+
+        // Calendar functionality
+        $(document).ready(function() {
+            checkAuth();
+            
+            // Initialize calendar
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                defaultView: 'agendaWeek',
+                editable: true,
+                eventLimit: true,
+                events: function(start, end, timezone, callback) {
+                    // Load events from backend
+                    const token = localStorage.getItem('token');
+                    if (!token) return;
+                    
+                    $.ajax({
+                        url: '/api/lessons',
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        success: function(lessons) {
+                            const events = lessons.map(lesson => ({
+                                title: `${lesson.subject} with ${lesson.tutor ? lesson.tutor.profile.firstName : ''}`,
+                                start: lesson.startTime,
+                                end: lesson.endTime,
+                                color: lesson.status === 'completed' ? '#39c088' : 
+                                      lesson.status === 'cancelled' ? '#ccc' : '#e44c65',
+                                lessonId: lesson._id
+                            }));
+                            callback(events);
+                        }
+                    });
+                },
+                eventClick: function(calEvent, jsEvent, view) {
+                    const token = localStorage.getItem('token');
+                    if (!token) return;
+                    
+                    // Show lesson details
+                    $.ajax({
+                        url: `/api/lessons/${calEvent.lessonId}`,
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        success: function(lesson) {
+                            let details = `
+                                <h3>${lesson.subject} გაკვეთილი</h3>
+                                <p>მასწავლებელი: ${lesson.tutor.profile.firstName} ${lesson.tutor.profile.lastName}</p>
+                                <p>მოსწავლე: ${lesson.student.profile.firstName} ${lesson.student.profile.lastName}</p>
+                                <p>დრო: ${moment(lesson.startTime).format('MMMM Do YYYY, h:mm a')} - ${moment(lesson.endTime).format('h:mm a')}</p>
+                                <p>სტატუსი: ${lesson.status}</p>
+                            `;
+                            
+                            if (lesson.meetingLink) {
+                                details += `<p><a href="${lesson.meetingLink}" target="_blank">შეუერთდი გაკვეთილს</a></p>`;
+                            }
+                            
+                            if (lesson.notes) {
+                                details += `<p>შენიშვნები: ${lesson.notes}</p>`;
+                            }
+                            
+                            alert(details);
+                        }
+                    });
+                },
+                dayClick: function(date, jsEvent, view) {
+                    if (view.name !== 'month') {
+                        $('#tutor-search-modal').show();
+                    }
+                }
+            });
+            
+            // Calendar modal controls
+            $('#view-calendar').click(function(e) {
+                e.preventDefault();
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                $('#calendar-modal').show();
+                $('#calendar').fullCalendar('refetchEvents');
+            });
+            
+            $('#schedule-lesson').click(function(e) {
+                e.preventDefault();
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                $('#tutor-search-modal').show();
+            });
+            
+            $('.close').click(function() {
+                $(this).closest('.modal').hide();
+            });
+            
+            // Chat functionality
+            const socket = io({
+                auth: {
+                    token: localStorage.getItem('token')
+                }
+            });
+            
+            const chatWindow = $('#chat-window');
+            const chatMessages = $('#chat-messages');
+            const chatInput = $('#chat-input');
+            
+            $('#open-chat').click(function(e) {
+                e.preventDefault();
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                chatWindow.toggle();
+                loadConversations();
+            });
+            
+            $('#close-chat').click(function() {
+                chatWindow.hide();
+            });
+            
+            function loadConversations() {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+                
+                $.ajax({
+                    url: '/api/messages/conversations',
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    success: function(conversations) {
+                        // Display list of conversations
+                        // This would be more complex in a real app
+                    }
+                });
+            }
+            
+            $('#send-message').click(function() {
+                const message = chatInput.val().trim();
+                if (message) {
+                    const token = localStorage.getItem('token');
+                    if (!token) return;
+                    
+                    // In a real app, we'd have a selected recipient
+                    const recipientId = 'selectedRecipientId'; // This would come from UI
+                    
+                    $.ajax({
+                        url: '/api/messages',
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify({
+                            recipient: recipientId,
+                            content: message
+                        }),
+                        success: function(msg) {
+                            chatInput.val('');
+                            displayMessage(msg);
+                        }
+                    });
+                }
+            });
+            
+            function displayMessage(msg) {
+                const messageElement = $('<div>').addClass('message').text(msg.content);
+                if (msg.sender._id === 'currentUserId') { // This would be the actual user ID
+                    messageElement.addClass('my-message').css('text-align', 'right');
+                } else {
+                    messageElement.addClass('their-message').css('text-align', 'left');
+                }
+                chatMessages.append(messageElement);
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            }
+            
+            socket.on('chat message', function(msg) {
+                displayMessage(msg);
+            });
+            
+            // Video call functionality
+            const videoWindow = $('#video-window');
+            let localStream;
+            let peerConnection;
+            
+            $('#start-call').click(function() {
+                videoWindow.show();
+                startVideoCall();
+            });
+            
+            $('#close-video').click(function() {
+                videoWindow.hide();
+                endVideoCall();
+            });
+            
+            $('#end-call').click(function() {
+                videoWindow.hide();
+                endVideoCall();
+            });
+            
+            async function startVideoCall() {
+                try {
+                    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    document.getElementById('localVideo').srcObject = localStream;
+                    
+                    // Here you would set up WebRTC peer connection
+                    const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+                    peerConnection = new RTCPeerConnection(configuration);
+                    
+                    // Add local stream to connection
+                    localStream.getTracks().forEach(track => {
+                        peerConnection.addTrack(track, localStream);
+                    });
+                    
+                    // Set up remote stream
+                    peerConnection.ontrack = event => {
+                        document.getElementById('remoteVideo').srcObject = event.streams[0];
+                    };
+                    
+                    // Simulate receiving an offer (in real app this would come via signaling)
+                    simulateOffer();
+                    
+                } catch(err) {
+                    console.error('Error starting video call:', err);
+                }
+            }
+            
+            function endVideoCall() {
+                if(localStream) {
+                    localStream.getTracks().forEach(track => track.stop());
+                }
+                if(peerConnection) {
+                    peerConnection.close();
+                }
+                document.getElementById('localVideo').srcObject = null;
+                document.getElementById('remoteVideo').srcObject = null;
+            }
+            
+            // Simulated WebRTC offer/answer (simplified)
+            async function simulateOffer() {
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                
+                // In real app, you'd send the offer to the other peer via signaling
+                setTimeout(async () => {
+                    const answer = {
+                        type: 'answer',
+                        sdp: offer.sdp // In real app this would come from the other peer
+                    };
+                    await peerConnection.setRemoteDescription(answer);
+                }, 1000);
+            }
+            
+            // Mute controls
+            $('#mute-audio').click(function() {
+                if (!localStream) return;
+                const isMuted = localStream.getAudioTracks()[0].enabled;
+                localStream.getAudioTracks()[0].enabled = !isMuted;
+                $(this).find('i').toggleClass('fa-microphone fa-microphone-slash');
+            });
+            
+            $('#mute-video').click(function() {
+                if (!localStream) return;
+                const isMuted = localStream.getVideoTracks()[0].enabled;
+                localStream.getVideoTracks()[0].enabled = !isMuted;
+                $(this).find('i').toggleClass('fa-video fa-video-slash');
+            });
+            
+            // Tutor search functionality
+            $('#tutor-search-button').click(function() {
+                const query = $('#tutor-search-input').val().trim();
+                if (!query) return;
+                
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                $.ajax({
+                    url: `/api/tutors/subject/${query}`,
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    success: function(tutors) {
+                        const resultsContainer = $('#tutor-results');
+                        resultsContainer.empty();
+                        
+                        if (tutors.length === 0) {
+                            resultsContainer.append('<p>მასწავლებელი ვერ მოიძებნა</p>');
+                            return;
+                        }
+                        
+                        tutors.forEach(tutor => {
+                            const tutorCard = $(`
+                                <div class="tutor-card">
+                                    <h3>${tutor.profile.firstName} ${tutor.profile.lastName}</h3>
+                                    <div class="subjects">
+                                        ${tutor.profile.subjects.map(subject => 
+                                            `<span class="subject-tag">${subject}</span>`
+                                        ).join('')}
+                                    </div>
+                                    <div class="rating">
+                                        ${'★'.repeat(Math.round(tutor.profile.rating))}${'☆'.repeat(5 - Math.round(tutor.profile.rating))}
+                                    </div>
+                                    <div class="price">ფასი: ${tutor.profile.price}₾/საათი</div>
+                                    <button class="button small select-tutor" data-id="${tutor._id}">აირჩიე</button>
+                                </div>
+                            `);
+                            resultsContainer.append(tutorCard);
+                        });
+                        
+                        $('.select-tutor').click(function() {
+                            const tutorId = $(this).data('id');
+                            scheduleLessonWithTutor(tutorId);
+                        });
+                    }
+                });
+            });
+            
+            function scheduleLessonWithTutor(tutorId) {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // In a real app, we'd have a proper form for selecting date/time
+                const startTime = moment().add(1, 'days').set({hour: 14, minute: 0}).toISOString();
+                const endTime = moment().add(1, 'days').set({hour: 15, minute: 0}).toISOString();
+                
+                $.ajax({
+                    url: '/api/lessons',
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        tutorId: tutorId,
+                        subject: 'Math', // This would come from UI
+                        startTime: startTime,
+                        endTime: endTime
+                    }),
+                    success: function(lesson) {
+                        alert('გაკვეთილი დაჯავშნილია!');
+                        $('#tutor-search-modal').hide();
+                        $('#calendar').fullCalendar('refetchEvents');
+                    }
+                });
+            }
+            
+            // Logout functionality
+            $('#logout').click(function(e) {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html>

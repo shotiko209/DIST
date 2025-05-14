@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <title>DIST - კალენდარი</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" type="x-icon" href="images/logo.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Main container */
+        .container {
+            background-color: rgba(39, 40, 51, 0.965);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        /* Calendar Styles */
+        .calendar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2em;
+            color: white;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            color: white;
+        }
+
+        .calendar-day {
+            min-height: 100px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: white;
+        }
+
+        .calendar-date {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .calendar-event {
+            background: #e44c65;
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            font-size: 0.8em;
+            cursor: pointer;
+        }
+
+        /* Time slots styles */
+        .time-slots-container {
+            margin-top: 30px;
+        }
+
+        .time-slots-header {
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .time-slot-header {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px;
+            text-align: center;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .time-label {
+            text-align: right;
+            padding: 8px;
+            font-size: 12px;
+            color: white;
+        }
+
+        .time-slot {
+            background: rgba(84, 128, 241, 0.2);
+            height: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: white;
+        }
+
+        .time-slot:hover {
+            background: rgba(84, 128, 241, 0.4);
+        }
+
+        .time-slot.booked {
+            background: rgba(228, 76, 101, 0.2);
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .time-slot.booked::after {
+            content: 'დაკავებული';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #e44c65;
+            font-size: 10px;
+        }
+
+        .time-slot.selected {
+            background: rgba(57, 192, 136, 0.4);
+            border: 2px solid #39c088;
+        }
+
+        /* Tutor selector */
+        .tutor-selector {
+            margin-bottom: 30px;
+        }
+
+        .tutor-selector select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Tutor Card Styles */
+        .mentors-list {
+            margin-top: 3em;
+        }
+
+        .mentors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 2em;
+        }
+
+        .tutor-card {
+            background: rgba(39, 40, 51, 0.8);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .tutor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .tutor-card h3 {
+            color: #e44c65;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .tutor-card .subjects {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tutor-card .subject-tag {
+            background: #5480f1;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+
+        .tutor-card .rating {
+            color: #ffcc00;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .tutor-card .price {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            color: white;
+        }
+
+        .tutor-card .bio {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #ddd;
+        }
+
+        .tutor-card .tutor-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .tutor-card .tutor-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #e44c65;
+            margin-right: 15px;
+        }
+
+        .tutor-card .tutor-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .tutor-card .tutor-info {
+            flex: 1;
+        }
+
+        .tutor-card .tutor-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3em;
+        }
+
+        .section-header h2 {
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            color: #e44c65;
+        }
+
+        .section-header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1em;
+            color: #ddd;
+        }
+
+        /* Booking form styles */
+        .booking-form {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: rgba(39, 40, 51, 0.8);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .form-title {
+            color: #e44c65;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .confirm-btn {
+            background-color: #e44c65;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* ჩათბოტის სტილები */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #e44c65;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbot-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        /* ჩათბოტის კონტეინერი */
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 998;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* ჩათბოტის სათაური */
+        .chatbot-header {
+            background-color: #e44c65;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* ჩათის შეტყობინებების კონტეინერი */
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+        }
+
+        /* შეტყობინების სტილი */
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .bot-message {
+            background-color: #e9e9e9;
+            color: #333;
+            border-top-left-radius: 5px;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background-color: #e44c65;
+            color: white;
+            border-top-right-radius: 5px;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        /* ჩათის შეტყობინების ტიპი */
+        .message-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ჩათის შესაყვანი ველი */
+        .chatbot-input {
+            display: flex;
+            padding: 15px;
+            background-color: #fff;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chatbot-input button {
+            background-color: #e44c65;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chatbot-input button:hover {
+            background-color: #d63b56;
+        }
+
+        /* ბოტის ტიპინგ ინდიკატორი */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #919191;
+            border-radius: 50%;
+            margin: 0 2px;
+            display: inline-block;
+            animation: typing 1s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* სუგესტიები */
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .suggestion-chip {
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background-color: #d0d0d0;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .calendar-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .calendar-day {
+                min-height: 60px;
+            }
+            
+            .mentors-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tutor-card .tutor-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .tutor-card .tutor-image {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .time-slots-header,
+            .time-slots-grid {
+                grid-template-columns: 60px repeat(7, 1fr);
+                font-size: 12px;
+            }
+
+            .time-label {
+                font-size: 10px;
+            }
+
+            .chatbot-container {
+                width: 300px;
+                height: 450px;
+                bottom: 80px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body class="is-preload">
+    <div id="page-wrapper">
+             <!-- Header -->
+<header id="header">
+    <a href="index.html"><img src="images/logo.png" class="logo" alt="" style="height: 40px; width: auto;"></a>
+    <nav id="nav">
+        <ul>
+            <li><a href="index.html">მთავარი</a></li>
+            <li><a href="mentor.html" class="active">მასწავლებლები</a></li>
+            <li><a href="mycalendar.html">კალენდარი</a></li>
+            <li><a href="register.html" class="button primary">რეგისტრაცია</a></li>
+            <li id="user-profile" style="display:none;">
+                <a href="#"><i class="fas fa-user"></i></a>
+                <ul>
+                    <li><a href="profile.html">პროფილი</a></li>
+                    <li><a href="#" id="logout">გამოსვლა</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+        <!-- Main Content -->
+        <section class="wrapper style1">
+            <div class="container">
+                <div class="section-header">
+                    <h2>ჩემი გაკვეთილების კალენდარი</h2>
+                    <p>აქ შეგიძლიათ ნახოთ თქვენი დაჯავშნილი გაკვეთილები და დაიჯავშნოთ ახალი</p>
+                </div>
+
+                <!-- Tutor selector dropdown -->
+                <div class="tutor-selector">
+                    <label for="tutor-select">აირჩიეთ მასწავლებელი:</label>
+                    <select id="tutor-select">
+                        <option value="1" selected>გიორგი ნოზაძე - მათემატიკა, ფიზიკა (25₾/საათი)</option>
+                        <option value="2">ანა ბერიძე - ინგლისური ენა (20₾/საათი)</option>
+                        <option value="3">ლევან მამულაშვილი - პროგრამირება (30₾/საათი)</option>
+                        <option value="4">მარიამ კაკაბაძე - ქიმია, ბიოლოგია (22₾/საათი)</option>
+                    </select>
+                </div>
+
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <h3 id="current-week">15 მაისი - 21 მაისი, 2023</h3>
+                        <div class="calendar-nav">
+                            <button class="button small" id="prev-week"><i class="fas fa-chevron-left"></i> წინა კვირა</button>
+                            <button class="button small" id="today-btn">დღეს</button>
+                            <button class="button small" id="next-week">შემდეგი კვირა <i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Monthly calendar view -->
+                    <div class="calendar-grid">
+                        <div class="calendar-day-header">ორშაბათი</div>
+                        <div class="calendar-day-header">სამშაბათი</div>
+                        <div class="calendar-day-header">ოთხშაბათი</div>
+                        <div class="calendar-day-header">ხუთშაბათი</div>
+                        <div class="calendar-day-header">პარასკევი</div>
+                        <div class="calendar-day-header">შაბათი</div>
+                        <div class="calendar-day-header">კვირა</div>
+
+                        <!-- Calendar days will be generated by JavaScript -->
+                    </div>
+
+                    <!-- Time slots for booking -->
+                    <div class="time-slots-container">
+                        <h3>ხელმისაწვდომი დროები</h3>
+                        <div class="time-slots-header">
+                            <div></div>
+                            <div class="time-slot-header">ორშაბათი</div>
+                            <div class="time-slot-header">სამშაბათი</div>
+                            <div class="time-slot-header">ოთხშაბათი</div>
+                            <div class="time-slot-header">ხუთშაბათი</div>
+                            <div class="time-slot-header">პარასკევი</div>
+                            <div class="time-slot-header">შაბათი</div>
+                            <div class="time-slot-header">კვირა</div>
+                        </div>
+                        <div class="time-slots-grid" id="time-slots-grid">
+                            <!-- Time slots will be generated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Booking form -->
+                    <div class="booking-form" id="booking-form">
+                        <h3 class="form-title">გაკვეთილის დაჯავშნა</h3>
+                        <div class="form-group">
+                            <label for="lesson-date">თარიღი:</label>
+                            <input type="text" id="lesson-date" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="lesson-time">დრო:</label>
+                            <input type="text" id="lesson-time" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="lesson-notes">შენიშვნები (არასავალდებულო):</label>
+                            <textarea id="lesson-notes" placeholder="მიუთითეთ დამატებითი ინფორმაცია ან შენიშვნები..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button class="cancel-btn" id="cancel-booking">გაუქმება</button>
+                            <button class="confirm-btn" id="confirm-booking">დაჯავშნა</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Lesson Booking Section -->
+                <div class="section-header" style="margin-top: 4em;">
+                    <h2>მასწავლებლები</h2>
+                    <p>აირჩიეთ მასწავლებელი თქვენი ახალი გაკვეთილის დასაჯავშნად</p>
+                </div>
+
+                <!-- Mentors List -->
+                <div class="mentors-list">
+                    <div class="mentors-grid">
+                        <!-- Featured Tutor 1 -->
+                        <div class="tutor-card">
+                            <div class="tutor-header">
+                                <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="ანა ბერიძე" class="tutor-image">
+                                <div class="tutor-info">
+                                    <h3>ანა ბერიძე</h3>
+                                    <div class="rating">★★★★★</div>
+                                </div>
+                            </div>
+                            <div class="subjects">
+                                <span class="subject-tag">მათემატიკა</span>
+                                <span class="subject-tag">ფიზიკა</span>
+                            </div>
+                            <div class="price">25₾/საათი</div>
+                            <div class="bio">
+                                სწავლობ თბილისის სახელმწიფო უნივერსიტეტში, მათემატიკის ფაკულტეტზე. მათემატიკისა და ფიზიკის ოლიმპიადების გამარჯვებული. დამეხმარება სასკოლო მათემატიკასა და ფიზიკაში, ასევე ერთიანი ეროვნული გამოცდებისთვის მომზადებაში.
+                            </div>
+                            <div class="tutor-meta">
+                                <span><i class="fas fa-graduation-cap"></i> თსუ, მათემატიკა</span>
+                                <span><i class="fas fa-users"></i> 120+ სტუდენტი</span>
+                            </div>
+                            <div class="tutor-actions">
+                                <a href="profile.html" class="button primary small">პროფილის ნახვა</a>
+                                <a href="mycalendar.html" class="button small">დაჯავშნა</a>
+                            </div>
+                        </div>
+                        
+                        <!-- Featured Tutor 2 -->
+                        <div class="tutor-card">
+                            <div class="tutor-header">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="გიორგი კვარაცხელია" class="tutor-image">
+                                <div class="tutor-info">
+                                    <h3>გიორგი კვარაცხელია</h3>
+                                    <div class="rating">★★★★★</div>
+                                </div>
+                            </div>
+                            <div class="subjects">
+                                <span class="subject-tag">ინგლისური</span>
+                                <span class="subject-tag">გერმანული</span>
+                            </div>
+                            <div class="price">30₾/საათი</div>
+                            <div class="bio">
+                                ფილოლოგიის სტუდენტი, C2 დონის სერტიფიცირებული ინგლისურად (IELTS 8.5) და B2 გერმანულად. 3 წლის გამოცდილება აქვს როგორც ბავშვებთან, ასევე მოზარდებთან და ზრდასრულებთან მუშაობაში. დაგეხმარებათ გრამატიკასა და საუბარში.
+                            </div>
+                            <div class="tutor-meta">
+                                <span><i class="fas fa-graduation-cap"></i> ილიას უნივერსიტეტი, ფილოლოგია</span>
+                                <span><i class="fas fa-users"></i> 90+ სტუდენტი</span>
+                            </div>
+                            <div class="tutor-actions">
+                                <a href="#" class="button primary small">პროფილის ნახვა</a>
+                                <a href="#" class="button small">დაჯავშნა</a>
+                            </div>
+                        </div>
+
+                        <!-- Tutor 3 -->
+                        <div class="tutor-card">
+                            <div class="tutor-header">
+                                <img src="https://randomuser.me/api/portraits/women/43.jpg" alt="მარიამ მამულაშვილი" class="tutor-image">
+                                <div class="tutor-info">
+                                    <h3>მარიამ მამულაშვილი</h3>
+                                    <div class="rating">★★★★☆</div>
+                                </div>
+                            </div>
+                            <div class="subjects">
+                                <span class="subject-tag">ქიმია</span>
+                                <span class="subject-tag">ბიოლოგია</span>
+                            </div>
+                            <div class="price">20₾/საათი</div>
+                            <div class="bio">
+                                მედიცინის სტუდენტი, დაგეხმარებათ სასკოლო ქიმიასა და ბიოლოგიაში, ასევე მომზადებაში ერთიანი ეროვნული გამოცდებისთვის. მაქვს 2 წლის გამოცდილება რეპეტიტორობაში.
+                            </div>
+                            <div class="tutor-meta">
+                                <span><i class="fas fa-graduation-cap"></i> თსსუ, მედიცინა</span>
+                                <span><i class="fas fa-users"></i> 75+ სტუდენტი</span>
+                            </div>
+                            <div class="tutor-actions">
+                                <a href="#" class="button primary small">პროფილის ნახვა</a>
+                                <a href="#" class="button small">დაჯავშნა</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="https://www.facebook.com/profile.php?id=61575906249858" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="https://www.instagram.com/distplatform/" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; DIST. All rights reserved.</li>
+                <li>Design: <a href="https://www.linkedin.com/in/%E1%83%A8%E1%83%9D%E1%83%97%E1%83%99%E1%83%98%E1%83%99%E1%83%9D-%E1%83%91%E1%83%94%E1%83%A0%E1%83%9D%E1%83%A8%E1%83%95%E1%83%98%E1%83%9A%E1%83%98-b90a33284/">SHOTIKO</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <!-- ჩათბოტის იკონი -->
+    <div class="chatbot-icon" id="chatbot-icon">
+        <i class="fas fa-comment"></i>
+    </div>
+
+    <!-- ჩათბოტის კონტეინერი -->
+    <div class="chatbot-container" id="chatbot-container">
+        <div class="chatbot-header">
+            <h3>DIST ასისტენტი</h3>
+            <button class="close-btn" id="close-chatbot">&times;</button>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message-container">
+                <div class="message bot-message">
+                    გამარჯობა! მე ვარ DIST-ის ასისტენტი. რით შემიძლია დაგეხმარო გაკვეთილის დაჯავშნაში?
+                </div>
+                <div class="suggestion-chips">
+                    <div class="suggestion-chip">როგორ დავიწყო სწავლა?</div>
+                    <div class="suggestion-chip">როგორ შევცვალო მასწავლებელი?</div>
+                    <div class="suggestion-chip">ჩემი გაკვეთილები</div>
+                    <div class="suggestion-chip">როგორ გავაუქმო ჯავშანი?</div>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbot-input-field" placeholder="შეკითხვა დასვით...">
+            <button id="send-message-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/jquery.dropotron.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // მონაცემები და ცვლადები
+            const calendarGrid = document.querySelector('.calendar-grid');
+            const timeSlotsGrid = document.getElementById('time-slots-grid');
+            const currentWeekDisplay = document.getElementById('current-week');
+            const prevWeekBtn = document.getElementById('prev-week');
+            const nextWeekBtn = document.getElementById('next-week');
+            const todayBtn = document.getElementById('today-btn');
+            const bookingForm = document.getElementById('booking-form');
+            const confirmBookingBtn = document.getElementById('confirm-booking');
+            const cancelBookingBtn = document.getElementById('cancel-booking');
+            const lessonDateInput = document.getElementById('lesson-date');
+            const lessonTimeInput = document.getElementById('lesson-time');
+            const tutorSelect = document.getElementById('tutor-select');
+            
+            // ჩათბოტის ელემენტები
+            const chatbotIcon = document.getElementById('chatbot-icon');
+            const chatbotContainer = document.getElementById('chatbot-container');
+            const closeBtn = document.getElementById('close-chatbot');
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const inputField = document.getElementById('chatbot-input-field');
+            const sendButton = document.getElementById('send-message-btn');
+            const typingIndicator = document.getElementById('typing-indicator');
+            
+            let currentDate = new Date();
+            let selectedSlot = null;
+            
+            // მასწავლებლების მონაცემები
+            const tutors = {
+                '1': {
+                    name: 'გიორგი ნოზაძე',
+                    subject: 'მათემატიკა, ფიზიკა',
+                    price: '25₾ საათში',
+                    photo: 'https://randomuser.me/api/portraits/men/32.jpg',
+                    bookedSlots: {
+                        '2023-05-15': ['10:00', '14:00', '16:00'],
+                        '2023-05-16': ['09:00', '11:00', '15:00'],
+                        '2023-05-17': ['13:00', '17:00'],
+                        '2023-05-18': ['10:00', '12:00', '14:00'],
+                        '2023-05-19': ['09:00', '11:00', '16:00'],
+                        '2023-05-20': ['10:00', '15:00'],
+                        '2023-05-21': ['11:00', '14:00']
+                    }
+                },
+                '2': {
+                    name: 'ანა ბერიძე',
+                    subject: 'ინგლისური ენა',
+                    price: '20₾ საათში',
+                    photo: 'https://randomuser.me/api/portraits/women/44.jpg',
+                    bookedSlots: {
+                        '2023-05-15': ['09:00', '12:00', '15:00'],
+                        '2023-05-16': ['10:00', '14:00'],
+                        '2023-05-17': ['11:00', '16:00'],
+                        '2023-05-18': ['09:00', '13:00', '17:00'],
+                        '2023-05-19': ['10:00', '15:00'],
+                        '2023-05-20': ['11:00', '14:00'],
+                        '2023-05-21': ['10:00', '13:00']
+                    }
+                },
+                '3': {
+                    name: 'ლევან მამულაშვილი',
+                    subject: 'პროგრამირება',
+                    price: '30₾ საათში',
+                    photo: 'https://randomuser.me/api/portraits/men/22.jpg',
+                    bookedSlots: {
+                        '2023-05-15': ['10:00', '14:00', '18:00'],
+                        '2023-05-16': ['09:00', '13:00', '17:00'],
+                        '2023-05-17': ['11:00', '15:00'],
+                        '2023-05-18': ['10:00', '14:00', '16:00'],
+                        '2023-05-19': ['09:00', '12:00', '15:00'],
+                        '2023-05-20': ['10:00', '13:00'],
+                        '2023-05-21': ['11:00', '14:00']
+                    }
+                },
+                '4': {
+                    name: 'მარიამ კაკაბაძე',
+                    subject: 'ქიმია, ბიოლოგია',
+                    price: '22₾ საათში',
+                    photo: 'https://randomuser.me/api/portraits/women/33.jpg',
+                    bookedSlots: {
+                        '2023-05-15': ['09:00', '12:00', '15:00'],
+                        '2023-05-16': ['10:00', '14:00', '16:00'],
+                        '2023-05-17': ['11:00', '15:00'],
+                        '2023-05-18': ['09:00', '13:00', '17:00'],
+                        '2023-05-19': ['10:00', '14:00'],
+                        '2023-05-20': ['11:00', '15:00'],
+                        '2023-05-21': ['10:00', '13:00']
+                    }
+                }
+            };
+            
+            // კალენდარის ინიციალიზაცია
+            function initCalendar() {
+                updateWeekDisplay();
+                generateCalendarDays();
+                generateTimeSlots();
+            }
+            
+            // კვირის ჩვენება
+            function updateWeekDisplay() {
+                const startOfWeek = getStartOfWeek(currentDate);
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(endOfWeek.getDate() + 6);
+                
+                const options = { month: 'long', day: 'numeric' };
+                const startStr = startOfWeek.toLocaleDateString('ka-GE', options);
+                const endStr = endOfWeek.toLocaleDateString('ka-GE', options);
+                const year = startOfWeek.getFullYear();
+                
+                currentWeekDisplay.textContent = `${startStr} - ${endStr}, ${year}`;
+            }
+            
+            // კვირის პირველი დღე (ორშაბათი)
+            function getStartOfWeek(date) {
+                const day = date.getDay();
+                const diff = date.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is Sunday
+                return new Date(date.setDate(diff));
+            }
+            
+            // თვის კალენდრის დღეების გენერირება
+            function generateCalendarDays() {
+                // წინა კონტენტის გასუფთავება
+                while (calendarGrid.children.length > 7) {
+                    calendarGrid.removeChild(calendarGrid.lastChild);
+                }
+                
+                const startOfWeek = getStartOfWeek(new Date(currentDate));
+                
+                // დღეების დამატება
+                for (let day = 0; day < 7; day++) {
+                    const date = new Date(startOfWeek);
+                    date.setDate(startOfWeek.getDate() + day);
+                    
+                    const dayCell = document.createElement('div');
+                    dayCell.className = 'calendar-day';
+                    
+                    const dateElement = document.createElement('div');
+                    dateElement.className = 'calendar-date';
+                    dateElement.textContent = date.getDate();
+                    dayCell.appendChild(dateElement);
+                    
+                    // დავამატოთ მოვლენები (სიმულაციისთვის)
+                    const dateStr = formatDate(date);
+                    const tutorId = tutorSelect.value;
+                    const tutorBookedSlots = tutors[tutorId].bookedSlots;
+                    
+                    if (tutorBookedSlots[dateStr]) {
+                        tutorBookedSlots[dateStr].forEach(time => {
+                            const event = document.createElement('div');
+                            event.className = 'calendar-event';
+                            event.textContent = `${time} - ${tutors[tutorId].name}`;
+                            dayCell.appendChild(event);
+                        });
+                    }
+                    
+                    // მონიშნეთ დღევანდელი თარიღი
+                    const today = new Date();
+                    if (date.getDate() === today.getDate() && 
+                        date.getMonth() === today.getMonth() && 
+                        date.getFullYear() === today.getFullYear()) {
+                        dayCell.style.border = '2px solid #e44c65';
+                    }
+                    
+                    calendarGrid.appendChild(dayCell);
+                }
+            }
+            
+            // დროის სლოტების გენერირება
+            function generateTimeSlots() {
+                timeSlotsGrid.innerHTML = '';
+                
+                const startOfWeek = getStartOfWeek(currentDate);
+                const tutorId = tutorSelect.value;
+                const bookedSlots = tutors[tutorId].bookedSlots;
+                
+                // დროის სლოტები (08:00 - 20:00)
+                for (let hour = 8; hour <= 20; hour++) {
+                    const timeLabel = document.createElement('div');
+                    timeLabel.className = 'time-label';
+                    timeLabel.textContent = `${hour}:00`;
+                    timeSlotsGrid.appendChild(timeLabel);
+                    
+                    // დღეების სვეტები
+                    for (let day = 0; day < 7; day++) {
+                        const date = new Date(startOfWeek);
+                        date.setDate(startOfWeek.getDate() + day);
+                        
+                        const dateStr = formatDate(date);
+                        const timeStr = `${hour}:00`;
+                        
+                        const slot = document.createElement('div');
+                        slot.className = 'time-slot';
+                        slot.dataset.date = dateStr;
+                        slot.dataset.time = timeStr;
+                        
+                        // შევამოწმოთ არის თუ არა დრო დაკავებული
+                        if (bookedSlots[dateStr] && bookedSlots[dateStr].includes(timeStr)) {
+                            slot.className = 'time-slot booked';
+                        } else {
+                            slot.addEventListener('click', function() {
+                                selectTimeSlot(this);
+                            });
+                        }
+                        
+                        timeSlotsGrid.appendChild(slot);
+                    }
+                }
+            }
+            
+            // დროის სლოტის არჩევა
+            function selectTimeSlot(slot) {
+                // წინა არჩევის მოხსნა
+                if (selectedSlot) {
+                    selectedSlot.classList.remove('selected');
+                }
+                
+                // ახალი არჩევა
+                slot.classList.add('selected');
+                selectedSlot = slot;
+                
+                // ფორმის ჩვენება
+                showBookingForm();
+            }
+            
+            // ფორმის ჩვენება
+            function showBookingForm() {
+                if (!selectedSlot) return;
+                
+                const dateStr = selectedSlot.dataset.date;
+                const timeStr = selectedSlot.dataset.time;
+                const tutorId = tutorSelect.value;
+                const tutor = tutors[tutorId];
+                
+                // თარიღის ფორმატირება
+                const date = new Date(dateStr);
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const formattedDate = date.toLocaleDateString('ka-GE', options);
+                
+                // დროის ფორმატირება
+                const endHour = parseInt(timeStr.split(':')[0]) + 1;
+                const formattedTime = `${timeStr} - ${endHour}:00`;
+                
+                // ველების შევსება
+                lessonDateInput.value = `${formattedDate} (${tutor.name})`;
+                lessonTimeInput.value = formattedTime;
+                
+                // ფორმის ჩვენება
+                bookingForm.style.display = 'block';
+                
+                // სქროლირება ფორმაზე
+                bookingForm.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // თარიღის ფორმატირება YYYY-MM-DD
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            
+            // დაჯავშნის დადასტურება
+            function confirmBooking() {
+                if (!selectedSlot) return;
+                
+                const notes = document.getElementById('lesson-notes').value;
+                const dateStr = selectedSlot.dataset.date;
+                const timeStr = selectedSlot.dataset.time;
+                const tutorId = tutorSelect.value;
+                
+                // აქ იქნება AJAX მოთხოვნა სერვერზე
+                // სიმულაციისთვის:
+                if (!tutors[tutorId].bookedSlots[dateStr]) {
+                    tutors[tutorId].bookedSlots[dateStr] = [];
+                }
+                tutors[tutorId].bookedSlots[dateStr].push(timeStr);
+                
+                // შეტყობინების ჩვენება
+                alert('გაკვეთილი წარმატებით დაჯავშნა!');
+                
+                // კალენდარის განახლება
+                generateCalendarDays();
+                generateTimeSlots();
+                
+                // ფორმის დამალვა
+                bookingForm.style.display = 'none';
+                selectedSlot = null;
+                
+                // შენიშვნების ველის გასუფთავება
+                document.getElementById('lesson-notes').value = '';
+            }
+            
+            // დაჯავშნის გაუქმება
+            function cancelBooking() {
+                if (selectedSlot) {
+                    selectedSlot.classList.remove('selected');
+                    selectedSlot = null;
+                }
+                bookingForm.style.display = 'none';
+            }
+            
+            // მასწავლებლის შეცვლა
+            function updateTutorInfo() {
+                const tutorId = tutorSelect.value;
+                generateCalendarDays();
+                generateTimeSlots();
+            }
+            
+            // მოვლენების დამაკავშირებელი
+            prevWeekBtn.addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() - 7);
+                initCalendar();
+            });
+            
+            nextWeekBtn.addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() + 7);
+                initCalendar();
+            });
+            
+            todayBtn.addEventListener('click', function() {
+                currentDate = new Date();
+                initCalendar();
+            });
+            
+            confirmBookingBtn.addEventListener('click', confirmBooking);
+            cancelBookingBtn.addEventListener('click', cancelBooking);
+            
+            tutorSelect.addEventListener('change', updateTutorInfo);
+            
+            // კალენდარის ინიციალიზაცია გვერდის ჩატვირთვისას
+            initCalendar();
+            
+            // Book lesson button functionality
+            const bookButtons = document.querySelectorAll('.tutor-actions .button:last-child');
+            bookButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tutorName = this.closest('.tutor-card').querySelector('h3').textContent;
+                    alert(`დაჯავშნის ფორმა გაიხსნება ${tutorName}-თან გაკვეთილის დასაჯავშნად`);
+                });
+            });
+            
+            // ჩათბოტის ლოგიკა
+            chatbotIcon.addEventListener('click', function() {
+                chatbotContainer.style.display = 'flex';
+                setTimeout(() => {
+                    inputField.focus();
+                }, 300);
+            });
+
+            closeBtn.addEventListener('click', function() {
+                chatbotContainer.style.display = 'none';
+            });
+
+            // შეტყობინების გაგზავნა
+            function sendMessage() {
+                const message = inputField.value.trim();
+                if (message === '') return;
+
+                // დავამატოთ მომხმარებლის შეტყობინება
+                addMessage(message, 'user');
+                inputField.value = '';
+
+                // ვაჩვენოთ ტიპინგის ინდიკატორი
+                typingIndicator.style.display = 'flex';
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                // დავიმიტაციოთ ბოტის პასუხი მცირე დაყოვნებით
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    const botResponse = getBotResponse(message);
+                    addMessage(botResponse.text, 'bot', botResponse.suggestions);
+                }, 1000 + Math.random() * 1000);
+            }
+
+            // დავამატოთ შეტყობინება ჩატში
+            function addMessage(text, sender, suggestions = []) {
+                const messageContainer = document.createElement('div');
+                messageContainer.className = 'message-container';
+
+                const message = document.createElement('div');
+                message.className = `message ${sender}-message`;
+                message.textContent = text;
+
+                messageContainer.appendChild(message);
+
+                // თუ არსებობს სუგესტიები, დავამატოთ ისინი
+                if (suggestions.length > 0) {
+                    const chipsContainer = document.createElement('div');
+                    chipsContainer.className = 'suggestion-chips';
+
+                    suggestions.forEach(suggestion => {
+                        const chip = document.createElement('div');
+                        chip.className = 'suggestion-chip';
+                        chip.textContent = suggestion;
+                        chip.addEventListener('click', () => {
+                            inputField.value = suggestion;
+                            sendMessage();
+                        });
+                        chipsContainer.appendChild(chip);
+                    });
+
+                    messageContainer.appendChild(chipsContainer);
+                }
+
+                messagesContainer.appendChild(messageContainer);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // ბოტის პასუხების ლოგიკა
+            function getBotResponse(message) {
+                message = message.toLowerCase();
+                
+                // პირველად შევამოწმოთ მარტივი პასუხები
+                if (message.includes('გამარჯობა') || message.includes('სალამი') || message.includes('hello')) {
+                    return {
+                        text: 'გამარჯობა! რით შემიძლია დაგეხმარო გაკვეთილის დაჯავშნაში?',
+                        suggestions: ['როგორ დავიწყო სწავლა?', 'როგორ შევცვალო მასწავლებელი?', 'ჩემი გაკვეთილები']
+                    };
+                } else if (message.includes('რეგისტრაცია') || message.includes('სარეგისტრაციო')) {
+                    return {
+                        text: 'რეგისტრაციისთვის გადადით ზედა მარჯვენა კუთხეში მოცემულ "რეგისტრაცია" ღილაკზე ან გამოიყენეთ ეს ბმული: register.html',
+                        suggestions: ['მასწავლებლის რეგისტრაცია', 'სტუდენტის რეგისტრაცია']
+                    };
+                } else if (message.includes('მასწავლებელი') || message.includes('ტუტორი') || message.includes('გავხდე მასწავლებელი')) {
+                    return {
+                        text: 'მასწავლებლად რეგისტრაციისთვის, ჯერ შექმენით ანგარიში და შემდეგ პროფილის გვერდზე აირჩიეთ "გახდი მასწავლებელი".',
+                        suggestions: ['რა საგნები არის?', 'რა ანაზღაურებაა?', 'როგორ დავიწყო?']
+                    };
+                } else if (message.includes('საგან') || message.includes('საგნები') || message.includes('კურს')) {
+                    return {
+                        text: 'ჩვენს პლატფორმაზე შეგიძლიათ ისწავლოთ შემდეგი საგნები: მათემატიკა, ფიზიკა, ქიმია, ბიოლოგია, ისტორია, გეოგრაფია, ქართული ენა და ლიტერატურა, ინგლისური ენა, პროგრამირება და სხვა.',
+                        suggestions: ['რომელი საგანია პოპულარული?', 'ვინ ასწავლის მათემატიკას?', 'ფასები']
+                    };
+                } else if (message.includes('ფას') || message.includes('ღირს') || message.includes('თანხა')) {
+                    return {
+                        text: 'გაკვეთილების ფასი დამოკიდებულია მასწავლებელზე და საგანზე. საშუალოდ, ფასები იწყება 15₾-დან საათში.',
+                        suggestions: ['მასწავლებლები', 'გაკვეთილის ჯავშანი', 'გადახდის მეთოდები']
+                    };
+                } else if (message.includes('ჯავშან') || message.includes('დაჯავშნა') || message.includes('გაკვეთილი')) {
+                    return {
+                        text: 'გაკვეთილის დასაჯავშნად, აირჩიეთ სასურველი მასწავლებელი, შემდეგ კი კალენდარზე აირჩიეთ თქვენთვის მოსახერხებელი დრო და დააჭირეთ "დაჯავშნა" ღილაკს.',
+                        suggestions: ['მასწავლებლის არჩევა', 'კალენდრის ნახვა', 'ჩემი ჯავშნები']
+                    };
+                } else {
+                    return {
+                        text: 'მაპატიეთ, ვერ დავამუშავე თქვენი შეკითხვა. შეგიძლიათ სხვაგვარად ჩამოაყალიბოთ ან აირჩიოთ ერთ-ერთი ჩვენი სუგესტია.',
+                        suggestions: ['როგორ დავიწყო სწავლა?', 'როგორ შევცვალო მასწავლებელი?', 'ჩემი გაკვეთილები']
+                    };
+                }
+            }
+
+            // მოვუსმინოთ Enter-ის დაჭერას ინფუთში
+            inputField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // მოვუსმინოთ ღილაკის დაჭერას
+            sendButton.addEventListener('click', sendMessage);
+
+            // მოვუსმინოთ სუგესტიების დაჭერას
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('suggestion-chip')) {
+                    inputField.value = e.target.textContent;
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
