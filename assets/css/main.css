@@ -2158,6 +2158,11 @@ input, select, textarea {
 		position: relative;
 		margin: 0 0 1.5em 0;
 	}
+	header p2 {
+		color: red;
+		position: relative;
+		margin: 0 0 1.5em 0;
+	}
 
 	header h2 + p {
 		font-size: 1.25em;
