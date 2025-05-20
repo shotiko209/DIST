@@ -2,12 +2,14 @@
 <html lang="ka">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>მენტორის რეგისტრაცია</title>
   <style>
     body {
       font-family: sans-serif;
       max-width: 800px;
-      margin: auto;
+      margin: 0 auto;
+      padding: 20px;
     }
     .hidden {
       display: none;
@@ -18,58 +20,92 @@
       margin-top: 10px;
       border-radius: 8px;
     }
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
-<body>
-
+<body class="is-preload landing">
+  <div id="page-wrapper">
+        <!-- Header -->
+<header id="header">
+    <a href="index.html"><img src="images/logo.png" class="logo" alt="" style="height: 40px; width: auto;"></a>
+    <nav id="nav">
+        <ul>
+            <li><a href="index.html">მთავარი</a></li>
+            <li><a href="mentor.html" class="active">მასწავლებლები</a></li>
+            <li><a href="mycalendar.html">კალენდარი</a></li>
+            <li><a href="register.html" class="button primary">რეგისტრაცია</a></li>
+        </ul>
+    </nav>
+</header>
+</div id="page-wrapper >
 <h2>მენტორის რეგისტრაცია</h2>
 
 <form id="mentorForm">
-  <label>სახელი და გვარი:<br>
-    <input type="text" name="fullName" required>
-  </label><br><br>
+  <label for="fullName">სახელი და გვარი:</label>
+  <input type="text" id="fullName" name="fullName" required>
+  
+  <label for="email">ელფოსტა:</label>
+  <input type="email" id="email" name="email" required>
 
-  <label>ელფოსტა:<br>
-    <input type="email" name="email" required>
-  </label><br><br>
-
-  <label>საგნები, რომლებსაც ასწავლი:<br>
-    <input type="checkbox" name="subject" value="chemistry"> ქიმია<br>
-    <input type="checkbox" name="subject" value="physics"> ფიზიკა<br>
-    <input type="checkbox" name="subject" value="biology"> ბიოლოგია<br>
-    <input type="checkbox" name="subject" value="math"> მათემატიკა
-  </label><br><br>
+  <fieldset>
+    <legend>საგნები, რომლებსაც ასწავლი:</legend>
+    <label><input type="checkbox" name="subject" value="chemistry"> ქიმია</label>
+    <label><input type="checkbox" name="subject" value="physics"> ფიზიკა</label>
+    <label><input type="checkbox" name="subject" value="biology"> ბიოლოგია</label>
+    <label><input type="checkbox" name="subject" value="math"> მათემატიკა</label>
+  </fieldset>
 
   <!-- ქიმიის ტესტი -->
   <div id="chemistry-quiz" class="quiz-section hidden">
     <strong>ქიმიის ტესტი:</strong><br>
     1. წყლის ქიმიური ფორმულაა:<br>
-    <label><input type="radio" name="chem_q1" value="H2O"> H₂O</label><br>
-    <label><input type="radio" name="chem_q1" value="CO2"> CO₂</label><br>
+    <label><input type="radio" name="chem_q1" value="H2O" required> H₂O</label>
+    <label><input type="radio" name="chem_q1" value="CO2"> CO₂</label>
   </div>
 
   <!-- ფიზიკის ტესტი -->
   <div id="physics-quiz" class="quiz-section hidden">
     <strong>ფიზიკის ტესტი:</strong><br>
     1. ძალის ერთეულია:<br>
-    <label><input type="radio" name="phys_q1" value="ნიუტონი"> ნიუტონი</label><br>
-    <label><input type="radio" name="phys_q1" value="ვატი"> ვატი</label><br>
+    <label><input type="radio" name="phys_q1" value="ნიუტონი" required> ნიუტონი</label>
+    <label><input type="radio" name="phys_q1" value="ვატი"> ვატი</label>
   </div>
 
   <!-- ბიოლოგიის ტესტი -->
   <div id="biology-quiz" class="quiz-section hidden">
     <strong>ბიოლოგიის ტესტი:</strong><br>
     1. ადამიანის გენეტიკური მატერიაა:<br>
-    <label><input type="radio" name="bio_q1" value="DNA"> DNA</label><br>
-    <label><input type="radio" name="bio_q1" value="RNA"> RNA</label><br>
+    <label><input type="radio" name="bio_q1" value="DNA" required> DNA</label>
+    <label><input type="radio" name="bio_q1" value="RNA"> RNA</label>
   </div>
 
   <!-- მათემატიკის ტესტი -->
   <div id="math-quiz" class="quiz-section hidden">
     <strong>მათემატიკის ტესტი:</strong><br>
     1. 5 × 4 = ?<br>
-    <label><input type="radio" name="math_q1" value="20"> 20</label><br>
-    <label><input type="radio" name="math_q1" value="25"> 25</label><br>
+    <label><input type="radio" name="math_q1" value="20" required> 20</label>
+    <label><input type="radio" name="math_q1" value="25"> 25</label>
   </div>
 
   <br>
@@ -77,21 +113,49 @@
 </form>
 
 <script>
-  const checkboxes = document.querySelectorAll('input[name="subject"]');
-  const quizSections = {
-    chemistry: document.getElementById('chemistry-quiz'),
-    physics: document.getElementById('physics-quiz'),
-    biology: document.getElementById('biology-quiz'),
-    math: document.getElementById('math-quiz')
-  };
+  document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('input[name="subject"]');
+    const quizSections = {
+      chemistry: document.getElementById('chemistry-quiz'),
+      physics: document.getElementById('physics-quiz'),
+      biology: document.getElementById('biology-quiz'),
+      math: document.getElementById('math-quiz')
+    };
 
-  checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-      const value = checkbox.value;
-      if (checkbox.checked) {
-        quizSections[value].classList.remove('hidden');
-      } else {
-        quizSections[value].classList.add('hidden');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        const value = checkbox.value;
+        if (checkbox.checked) {
+          quizSections[value].classList.remove('hidden');
+        } else {
+          quizSections[value].classList.add('hidden');
+          // Reset radio buttons when section is hidden
+          const radios = quizSections[value].querySelectorAll('input[type="radio"]');
+          radios.forEach(radio => radio.checked = false);
+        }
+      });
+    });
+
+    document.getElementById('mentorForm').addEventListener('submit', function(e) {
+      // Check if at least one subject is selected
+      const selectedSubjects = Array.from(checkboxes).filter(cb => cb.checked);
+      if (selectedSubjects.length === 0) {
+        alert('გთხოვთ აირჩიოთ მინიმუმ ერთი საგანი');
+        e.preventDefault();
+        return;
+      }
+
+      // Check if all visible quizzes are answered
+      for (const subject of selectedSubjects) {
+        const section = quizSections[subject.value];
+        const radios = section.querySelectorAll('input[type="radio"]');
+        const isAnswered = Array.from(radios).some(radio => radio.checked);
+        
+        if (!isAnswered) {
+          alert(`გთხოვთ უპასუხოთ ${subject.nextSibling.textContent.trim()}-ის ტესტის კითხვას`);
+          e.preventDefault();
+          return;
+        }
       }
     });
   });
